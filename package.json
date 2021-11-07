@@ -15,6 +15,14 @@
     "webfontloader": "^1.6.28",
     "webpack-merge": "^5.1.4"
   },
+  "engine": {
+    "name": "myapp",
+    "description": "a really cool app",
+    "version": "1.0.0",
+    "engines": {
+      "node": "14.18.0"
+    }
+  },
   "devDependencies": {
     "@babel/core": "^7.11.6",
     "babel-loader": "^8.1.0",
