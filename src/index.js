@@ -1,6 +1,4 @@
 import Phaser, { Game } from "phaser";
-import PlayScene from './scenes/PlayScene';
-import PlatformScene from './scenes/PlatformScene';
 import flyHoreth from './scenes/flyHoreth';
 
 const config = {
