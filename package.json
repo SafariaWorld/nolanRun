@@ -36,6 +36,4 @@
     "webpack-dev-server": "^3.11.0",
     "node": "14.18.0"
   }
-  
 }
-
