@@ -13,6 +13,7 @@ class PlayScene extends Phaser.Scene {
         super('PlayScene');
        
         this.background = null;
+        this.foreground = null;
         this.player = null;
 
         //controls
@@ -59,7 +60,8 @@ class PlayScene extends Phaser.Scene {
 
     //Phaser Functions
     preload() {
-        this.load.image('background', 'assets/sky.png');
+        this.load.image('background', 'assets/newBackground.jpg');
+        this.load.image('foreground', 'assets/foreground.png');
         this.load.image('player', 'assets/horus.png');
         this.load.image('fireball', 'assets/fireball.png');
         this.load.image('electricball', 'assets/electricball.png');
@@ -67,6 +69,7 @@ class PlayScene extends Phaser.Scene {
         this.load.image('topUI', 'assets/topUI.png');
         this.load.image('horethBall','assets/horethBall.png');
         this.load.image('snake','assets/snake.png');
+        
 
         const fonts = new WebFontFile(this.load, 'Abel')
 		this.load.addFile(fonts);
@@ -99,7 +102,8 @@ class PlayScene extends Phaser.Scene {
     }
 
     update() {
-        this.background.tilePositionX += 0.5;
+        this.background.tilePositionX += 0.3;
+        this.foreground.tilePositionX += 0.8;
         this.setControls();
         
         if(this.horethBall) {
@@ -129,8 +133,10 @@ class PlayScene extends Phaser.Scene {
     }
 
     createBackground() {
-        this.background = this.add.tileSprite(1950, 50,1980,720, 'background');
-        this.background.setScale(2);
+        this.background = this.add.tileSprite(1250, 400, 2540, 720, 'background');
+        this.background.setScale(1);
+
+        this.foreground = this.add.tileSprite(1250, 400, 2540, 720, 'foreground')
     }
 
     //------------------------------Fire and Electric Ball and Damage Group ---------------------------//
