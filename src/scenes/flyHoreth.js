@@ -15,6 +15,7 @@ class PlayScene extends Phaser.Scene {
         this.background = null;
         this.foreground = null;
         this.clouds = null;
+        this.music = null;
         this.player = null;
 
         //controls
@@ -72,7 +73,7 @@ class PlayScene extends Phaser.Scene {
         this.load.image('horethBall','assets/horethBall.png');
         this.load.image('snake','assets/snake.png');
 
-        
+        this.load.audio('theme', 'assets/audio/mainMusic.wav');
 
         
 
@@ -83,6 +84,8 @@ class PlayScene extends Phaser.Scene {
     create() {
         this.createBackground()
         this.createPlayer();
+        this.music = this.sound.add('theme');
+        this.music.play();
         this.createCursorAndKeyUpKeyDown()
         
         this.createFireAndElectricBall();
@@ -164,7 +167,7 @@ class PlayScene extends Phaser.Scene {
             this.fireball.setScale(.3);
 
             //set collision box
-            this.fireball.body.setSize(310,310);
+            this.fireball.body.setSize(280,280);
 
             this.damageItemDistance += 200;
             this.damageItemHeight = Math.random() * (600 - 50) + 50;
@@ -217,11 +220,11 @@ class PlayScene extends Phaser.Scene {
             //console.log(i)
             //console.log(this.electricGroup.getChildren()[i].y, "hfas");
            
-                if (this.electricGroup.getChildren()[i].y < 0) {
+                if (this.electricGroup.getChildren()[i].y < 55) {
                     this.electricGroup.getChildren()[i].setVelocityY(200);
                 } 
         
-                if (this.electricGroup.getChildren()[i].y > 1050) {
+                if (this.electricGroup.getChildren()[i].y > 680) {
                     this.electricGroup.getChildren()[i].setVelocityY(-200);
                 }
         }
