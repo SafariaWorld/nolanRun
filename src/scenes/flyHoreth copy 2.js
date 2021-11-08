@@ -84,8 +84,8 @@ class PlayScene extends Phaser.Scene {
 
         this.createSnake();
         this.moveSnake();
-        this.createSnakeCollider();
-        
+        this.createSnakeCollider(); 
+          
         
     }
 

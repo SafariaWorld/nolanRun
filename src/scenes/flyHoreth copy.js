@@ -62,9 +62,9 @@ class PlayScene extends Phaser.Scene {
     }
 
     create() {
-        this.createBackground()
+        this.createBackground();
         this.createPlayer();
-        this.createCursorAndKeyUpKeyDown()
+        this.createCursorAndKeyUpKeyDown();
         
         this.createFireAndElectricBall();
         this.createDamageCollider();
@@ -189,7 +189,6 @@ class PlayScene extends Phaser.Scene {
         this.cursors = this.input.keyboard.createCursorKeys();
         this.keyUP = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.UP);
         this.keyDOWN = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.DOWN);
-        //this.spaceDOWN = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
     }
 
   

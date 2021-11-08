@@ -255,7 +255,7 @@ class PlayScene extends Phaser.Scene {
         console.log(this.enemyGroup);
         console.log(this.playerDamageGroup);
 
-        this.physics.add.collider(this.enemyGroup, this.playerDamageGroup, function() {
+            this.physics.add.collider(this.enemyGroup, this.playerDamageGroup, function() {
             
         });
     }
@@ -266,7 +266,6 @@ class PlayScene extends Phaser.Scene {
 
     moveSnake() {
         this.enemyGroup.setVelocityX(-300);
-        
     } 
 
     checkAndStopSnake() {
@@ -297,16 +296,16 @@ class PlayScene extends Phaser.Scene {
         const {left, right} = this.cursors;
 
         if (left.isDown) {
-            this.player.setVelocityX(-285);
+            this.player.setVelocityX(-385);
         } 
         else if (right.isDown) {
-            this.player.setVelocityX(285);
+            this.player.setVelocityX(385);
         } 
         else if (this.keyUP.isDown) {
-            this.player.setVelocityY(-285);
+            this.player.setVelocityY(-385);
         }
         else if (this.keyDOWN.isDown) {
-            this.player.setVelocityY(285);
+            this.player.setVelocityY(385);
         }
         else {
             this.player.setVelocityX(0);
@@ -314,13 +313,13 @@ class PlayScene extends Phaser.Scene {
         }
 
         if (this.keyUP.isDown && right.isDown) {
-            this.player.setVelocityY(-285);
-            this.player.setVelocityX(285);
+            this.player.setVelocityY(-385);
+            this.player.setVelocityX(385);
         }
      
         if (this.keyDOWN.isDown && right.isDown) {
-            this.player.setVelocityY(285);
-            this.player.setVelocityX(285);
+            this.player.setVelocityY(385);
+            this.player.setVelocityX(385);
         }
     }
 
