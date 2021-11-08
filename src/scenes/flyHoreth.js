@@ -1,5 +1,6 @@
 import Phaser from "Phaser";
-import WebFontFile from '../WebFontFile'
+import WebFontFile from '../WebFontFile';
+
 
 
 //****starting to fuck with the Horeth Orb Group settings****//
@@ -51,6 +52,7 @@ class PlayScene extends Phaser.Scene {
         //enemies
         this.snake = null;
         this.enemyGroup = null;
+        this.snakeDistance = null;
     }
 
     
@@ -77,6 +79,7 @@ class PlayScene extends Phaser.Scene {
         
         this.createFireAndElectricBall();
         this.createDamageCollider();
+        this.createElectricCollider();
         this.createCoins();
         this.createCollectOverlap();
 
@@ -90,6 +93,8 @@ class PlayScene extends Phaser.Scene {
 
         this.createSnake();
         this.moveSnake();
+
+    
         
     }
 
@@ -106,6 +111,11 @@ class PlayScene extends Phaser.Scene {
             this.checkAndStopSnake();
         }
         
+        if (this.electricball) {
+            //console.log('check position');
+            this.checkElectricBallPositionAndMove()
+        
+        }
         
     }
 
@@ -126,10 +136,11 @@ class PlayScene extends Phaser.Scene {
     //------------------------------Fire and Electric Ball and Damage Group ---------------------------//
     createFireAndElectricBall() {
         this.damageGroup = this.physics.add.group();
+        this.electricGroup = this.physics.add.group();
 
         this.damageItemDistance = 1000;
 
-        for (let i = 0; i < 50; i++) {
+        for (let i = 0; i < 20; i++) {
 
             this.damageItemDistance += 400;
             this.damageItemHeight = Math.random() * (600 - 50) + 50;
@@ -143,28 +154,74 @@ class PlayScene extends Phaser.Scene {
 
             this.damageItemDistance += 200;
             this.damageItemHeight = Math.random() * (600 - 50) + 50;
-            this.electricball = this.damageGroup.create(this.damageItemDistance, this.damageItemHeight, 'electricball');
+            this.electricball = this.electricGroup.create(this.damageItemDistance, this.damageItemHeight, 'electricball');
             this.electricball.setScale(.2);
+            this.createElectricballMovement(this.electricball.y);
+
+
 
             //set collision box
             this.electricball.body.setSize(175,175);
 
             this.damageItemDistance += 200;
             this.damageItemHeight = Math.random() * (600 - 50) + 50;
-            this.electricball = this.damageGroup.create(this.damageItemDistance, this.damageItemHeight, 'electricball');
+            this.electricball = this.electricGroup.create(this.damageItemDistance, this.damageItemHeight, 'electricball');
             this.electricball.setScale(.2);
+
+            this.createElectricballMovement(this.electricball.y);
 
             //set collision box
             this.electricball.body.setSize(275,275);
         }
 
         this.damageGroup.setVelocityX(-350);
+        this.electricGroup.setVelocityX(-350);
         
+
+    }
+
+    createElectricballMovement() {
+
+       console.log('fsadf');
+
+        if (this.electricball.y > 600) {
+            this.electricball.setVelocityY(200);
+        } else {
+            this.electricball.setVelocityY(-200);
+        }
+        
+    }
+
+    checkElectricBallPositionAndMove() {
+
+        
+        //console.log(this.electricball.y);
+
+        //console.log(this.damageGroup.getChildren().length);
+
+        for (let i = 0; i < this.electricGroup.getChildren().length; i++) {
+            //console.log(i)
+            //console.log(this.electricGroup.getChildren()[i].y, "hfas");
+           
+                if (this.electricGroup.getChildren()[i].y < 0) {
+                    this.electricGroup.getChildren()[i].setVelocityY(200);
+                } 
+        
+                if (this.electricGroup.getChildren()[i].y > 1050) {
+                    this.electricGroup.getChildren()[i].setVelocityY(-200);
+                }
+        }
 
     }
 
     createDamageCollider() {
         this.physics.add.collider(this.player, this.damageGroup, function() {
+            this.physics.pause();
+        });
+    }
+
+    createElectricCollider() {
+        this.physics.add.collider(this.player, this.electricGroup, function() {
             this.physics.pause();
         });
     }
@@ -213,29 +270,29 @@ class PlayScene extends Phaser.Scene {
 
         console.log(this.currentHorethBallNumber, this.maxHorethBall);
         if (this.currentHorethBallNumber < this.maxHorethBall) {
-            this.horethBall = this.playerDamageGroup.create(this.player.x, this.player.y, 'horethBall');
-            this.horethBall.setScale(.3);
-            this.playerDamageGroup.setVelocityX(900); 
-            this.currentHorethBallNumber += 1;
-            
-        } 
-
-         this.physics.add.collider(this.enemyGroup, this.playerDamageGroup, function() {
-             console.log(this.playerDamageGroup);
-             console.log(this.enemyGroup);
-        });
+        this.horethBall = this.playerDamageGroup.create(this.player.x, this.player.y, 'horethBall');
+        this.horethBall.setScale(.3);
+        this.playerDamageGroup.setVelocityX(900); 
+        this.currentHorethBallNumber += 1;
         
+    } 
+
+     this.physics.add.collider(this.enemyGroup, this.playerDamageGroup, function() {
+         console.log(this.playerDamageGroup);
+         console.log(this.enemyGroup);
+    });
+    
     }
 
     removeHorethBall() {
-        //console.log('removeHorethBall');
-        //console.log(this.maxHorethBall);
+    //console.log('removeHorethBall');
+    //console.log(this.maxHorethBall);
 
-        if (this.horethBall.x > 1300 && this.horethBall.active) {
-             this.horethBall.destroy();
-             this.currentHorethBallNumber -= 1;
-             //console.log('hey');
-        }
+    if (this.horethBall.x > 1300 && this.horethBall.active) {
+         this.horethBall.destroy();
+         this.currentHorethBallNumber -= 1;
+         //console.log('hey');
+    }
     }
 
 
@@ -244,10 +301,20 @@ class PlayScene extends Phaser.Scene {
     createSnake() {
         this.enemyGroup = this.physics.add.group();
 
-        this.snake = this.enemyGroup.create(1380, 300, 'snake');
-        this.snake.body.setSize(150,70);
-
+        //if (this.snakeDistance == null) {
+            this.snakeDistance = 1380;
+       // } 
+        
+        
+        
+        //for (let i = 0; i <= 5; i++) {
+            this.snake = this.enemyGroup.create(this.snakeDistance, 300, 'snake');
+            this.snake.body.setSize(150,70);
+            this.snakeDistance += 100;
+        //}
+        
         this.enemyGroup.setVelocityY(20);
+        
     }
 
     createSnakeCollider() {
@@ -261,9 +328,6 @@ class PlayScene extends Phaser.Scene {
         });
     }
 
-    // createHorethBallCollider() {
-    //     this.createSnakeCollider();
-    // }
 
     moveSnake() {
         this.enemyGroup.setVelocityX(-300);
