@@ -3,7 +3,8 @@ import WebFontFile from '../WebFontFile'
 
 
 //****starting to fuck with the Horeth Orb Group settings****//
-//*** that's why there is copy 2 version of this document */
+//*** that's why there is copy 2 version of this document *//
+//*** Now adding movement to electric ball**/
 
 class PlayScene extends Phaser.Scene {
 
@@ -269,7 +270,6 @@ class PlayScene extends Phaser.Scene {
     } 
 
     checkAndStopSnake() {
-
         //console.log(this.snake.y);
         
         if (this.snake.x == 1100) {
@@ -295,31 +295,47 @@ class PlayScene extends Phaser.Scene {
     setControls() {
         const {left, right} = this.cursors;
 
+        let velocityStopper = false;
+
+
+        
+
         if (left.isDown) {
-            this.player.setVelocityX(-385);
+            this.player.setVelocityX(-295);
+            velocityStopper = true;
+            
+            
+            // if (velocityStopper == true) {
+            //     this.player.setVelocityX(0);
+            // }
         } 
         else if (right.isDown) {
-            this.player.setVelocityX(385);
+            this.player.setVelocityX(625);            
         } 
         else if (this.keyUP.isDown) {
-            this.player.setVelocityY(-385);
+            this.player.setVelocityY(-325);
         }
         else if (this.keyDOWN.isDown) {
-            this.player.setVelocityY(385);
+            this.player.setVelocityY(325);
         }
         else {
-            this.player.setVelocityX(0);
             this.player.setVelocityY(0);
+            this.player.setDrag(1000);
+            if (velocityStopper == true) {
+                this.player.setVelocityX(0);
+                velocityStopper == false;
+            }
+            
         }
 
         if (this.keyUP.isDown && right.isDown) {
-            this.player.setVelocityY(-385);
-            this.player.setVelocityX(385);
+            this.player.setVelocityY(-425);
+            this.player.setVelocityX(425);
         }
      
         if (this.keyDOWN.isDown && right.isDown) {
-            this.player.setVelocityY(385);
-            this.player.setVelocityX(385);
+            this.player.setVelocityY(425);
+            this.player.setVelocityX(425);
         }
     }
 
