@@ -154,7 +154,7 @@ class PlayScene extends Phaser.Scene {
 
         this.damageItemDistance = 1000;
 
-        for (let i = 0; i < 20; i++) {
+        for (let i = 0; i < 50; i++) {
 
             this.damageItemDistance += 400;
             this.damageItemHeight = Math.random() * (600 - 50) + 50;
