@@ -12,8 +12,11 @@ class PlayScene extends Phaser.Scene {
     constructor() {
         super('PlayScene');
        
+
         this.background = null;
+        this.backgroundBuildings = null;
         this.foreground = null;
+        this.sun = null;
         this.clouds = null;
         this.music = null;
         this.player = null;
@@ -33,11 +36,13 @@ class PlayScene extends Phaser.Scene {
         this.collectItemHeight = null;
         this.collectItemDistance = null;
         this.coins = null;
+        this.goldCollectSound = null;
 
         //playerDamage Group
         this.playerDamageGroup = null;
         this.horethBall = null;
         this.horethBallTimer = 0;
+        this.orbSound = null;
         this.fireButton;
         this.maxHorethBall = 1;
         this.currentHorethBallNumber = 0;
@@ -62,9 +67,12 @@ class PlayScene extends Phaser.Scene {
 
     //Phaser Functions
     preload() {
+        
         this.load.image('background', 'assets/newBackground.jpg');
+        this.load.image('backgroundBuildings', 'assets/backgroundBuildings.png');
         this.load.image('foreground', 'assets/foreground.png');
         this.load.image('clouds', 'assets/clouds.png');
+        this.load.image('sun', 'assets/sun.png');
         this.load.image('player', 'assets/horus.png');
         this.load.image('fireball', 'assets/fireball.png');
         this.load.image('electricball', 'assets/electricball.png');
@@ -74,6 +82,8 @@ class PlayScene extends Phaser.Scene {
         this.load.image('snake','assets/snake.png');
 
         this.load.audio('theme', 'assets/audio/mainMusic.wav');
+        this.load.audio('orbSound', 'assets/audio/spell.mp3');
+        this.load.audio('goldCollectSound', 'assets/audio/goldCollectSound.mp3')
 
         
 
@@ -84,7 +94,7 @@ class PlayScene extends Phaser.Scene {
     create() {
         this.createBackground()
         this.createPlayer();
-        this.music = this.sound.add('theme');
+        this.music = this.sound.add('theme', {volume: 0.2});
         this.music.play();
         this.createCursorAndKeyUpKeyDown()
         
@@ -93,6 +103,9 @@ class PlayScene extends Phaser.Scene {
         this.createElectricCollider();
         this.createCoins();
         this.createCollectOverlap();
+
+        this.orbSound = this.sound.add('orbSound', {volume: 0.8});
+        this.goldCollectSound = this.sound.add('goldCollectSound');
 
         this.topUI = this.add.image(0, 360, 'topUI').setOrigin(0, 0.5);
         this.scoreText = this.add.text(605, 16, '0', { fontSize: '40px', fill: 'white' }); 
@@ -112,6 +125,7 @@ class PlayScene extends Phaser.Scene {
     update() {
         this.background.tilePositionX += 0.5;
         this.foreground.tilePositionX += 8.8;
+        this.sun.tilePositionX += 0.05;
         this.clouds.tilePositionX += 1;
         this.setControls();
         
@@ -139,13 +153,20 @@ class PlayScene extends Phaser.Scene {
         this.player = this.physics.add.sprite(100, 250, 'player');
         this.player.setScale(0.4);
         this.player.setCollideWorldBounds(true);
+        this.player.body.setSize(255,45);
+
     }
 
     createBackground() {
         this.background = this.add.tileSprite(1250, 340, 2540, 720, 'background');
         this.background.setScale(1);
 
-        this.foreground = this.add.tileSprite(1250, 360, 2540, 720, 'foreground')
+
+        this.sun = this.add.tileSprite(800, 450, 2500, 1000, 'sun');
+        this.background = this.add.tileSprite(1250, 340, 2540, 720, 'backgroundBuildings');
+        this.background.setScale(1);
+        this.sun.setScale(.8);
+        this.foreground = this.add.tileSprite(1250, 360, 2540, 720, 'foreground');
 
         this.clouds = this.add.tileSprite(1250, 360, 2540, 720, 'clouds');
     }
@@ -178,7 +199,7 @@ class PlayScene extends Phaser.Scene {
 
 
             //set collision box
-            this.electricball.body.setSize(175,175);
+            this.electricball.body.setSize(255,255);
 
             this.damageItemDistance += 200;
             this.damageItemHeight = Math.random() * (600 - 50) + 50;
@@ -188,7 +209,7 @@ class PlayScene extends Phaser.Scene {
             this.createElectricballMovement(this.electricball.y);
 
             //set collision box
-            this.electricball.body.setSize(275,275);
+            this.electricball.body.setSize(255,255);
         }
 
         this.damageGroup.setVelocityX(-350);
@@ -257,7 +278,7 @@ class PlayScene extends Phaser.Scene {
             this.coins.setScale(.05);
 
             //set collision box
-            this.coins.body.setSize(575,575);
+            this.coins.body.setSize(675,675);
         }
 
         this.collectGroup.setVelocityX(-350);
@@ -271,6 +292,7 @@ class PlayScene extends Phaser.Scene {
         collectGroup.disableBody(true, true);
         this.score += 1;
         this.scoreText.setText(this.score);
+        this.goldCollectSound.play();
     }
 
     //Cursors
@@ -291,8 +313,11 @@ class PlayScene extends Phaser.Scene {
         this.horethBall.setScale(.3);
         this.playerDamageGroup.setVelocityX(900); 
         this.currentHorethBallNumber += 1;
+        this.orbSound.play();
         
     } 
+
+        
 
      this.physics.add.collider(this.enemyGroup, this.playerDamageGroup, function() {
          console.log(this.playerDamageGroup);
