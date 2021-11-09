@@ -61,13 +61,22 @@ class PlayScene extends Phaser.Scene {
         this.snake = null;
         this.enemyGroup = null;
         this.snakeDistance = null;
+
+        //fireball Animation
+        this.newFireBall = null;
+        this.fireAnimation = null;
+
+        //electricball Animation
+        this.newElectricBall = null;
+        this.ElectricAnimation = null;
     }
 
     
 
     //Phaser Functions
     preload() {
-        
+        this.load.audio('theme', 'assets/audio/mainMusic.wav');
+
         this.load.image('background', 'assets/newBackground.jpg');
         this.load.image('backgroundBuildings', 'assets/backgroundBuildings.png');
         this.load.image('foreground', 'assets/foreground.png');
@@ -81,7 +90,11 @@ class PlayScene extends Phaser.Scene {
         this.load.image('horethBall','assets/horethBall.png');
         this.load.image('snake','assets/snake.png');
 
-        this.load.audio('theme', 'assets/audio/mainMusic.wav');
+        this.load.spritesheet("newFireBall", "assets/newFireBall.png", { frameWidth: 300, frameHeight: 300 });
+        this.load.spritesheet("newElectricBall", "assets/newElectricBall.png", { frameWidth: 300, frameHeight: 300 });
+
+
+
         this.load.audio('orbSound', 'assets/audio/spell.mp3');
         this.load.audio('goldCollectSound', 'assets/audio/goldCollectSound.mp3')
 
@@ -92,10 +105,10 @@ class PlayScene extends Phaser.Scene {
     }
 
     create() {
-        this.createBackground()
-        this.createPlayer();
         this.music = this.sound.add('theme', {volume: 0.2});
         this.music.play();
+        this.createBackground()
+        this.createPlayer();
         this.createCursorAndKeyUpKeyDown()
         
         this.createFireAndElectricBall();
@@ -117,6 +130,10 @@ class PlayScene extends Phaser.Scene {
 
         this.createSnake();
         this.moveSnake();
+
+       
+        
+
 
     
         
@@ -183,33 +200,53 @@ class PlayScene extends Phaser.Scene {
             this.damageItemDistance += 400;
             this.damageItemHeight = Math.random() * (600 - 50) + 50;
             
+            this.newFireBall = {
+                key: 'fireBallAnimation',
+                frames: this.anims.generateFrameNumbers('newFireBall', {start: 0, end: 16, first: 0}),
+                frameRate: 13,
+                repeat: -1
+            }
+    
+            this.anims.create(this.newFireBall);
+           
 
-            this.fireball = this.damageGroup.create(this.damageItemDistance, this.damageItemHeight, 'fireball');
-            this.fireball.setScale(.3);
+            this.fireball = this.damageGroup.create(this.damageItemDistance, this.damageItemHeight, 'newFireBall').play('fireBallAnimation');
+            this.fireball.setScale(.8);
 
             //set collision box
-            this.fireball.body.setSize(280,280);
+            this.fireball.body.setSize(80,80);
 
             this.damageItemDistance += 200;
             this.damageItemHeight = Math.random() * (600 - 50) + 50;
-            this.electricball = this.electricGroup.create(this.damageItemDistance, this.damageItemHeight, 'electricball');
-            this.electricball.setScale(.2);
+
+            
+
+            this.newElectricBall = {
+                key: 'electricBallAnimation',
+                frames: this.anims.generateFrameNumbers('newElectricBall', {start:4, end:8, first:4}),
+                frameRate: 10,
+                repeat: -1
+            }
+
+            this.anims.create(this.newElectricBall);
+
+            this.electricball = this.electricGroup.create(this.damageItemDistance, this.damageItemHeight, 'newElectricBall').play('electricBallAnimation');
+            this.electricball.setScale(.5);
             this.createElectricballMovement(this.electricball.y);
 
 
 
             //set collision box
-            this.electricball.body.setSize(255,255);
+            this.electricball.body.setSize(100,100);
 
             this.damageItemDistance += 200;
             this.damageItemHeight = Math.random() * (600 - 50) + 50;
-            this.electricball = this.electricGroup.create(this.damageItemDistance, this.damageItemHeight, 'electricball');
-            this.electricball.setScale(.2);
-
+            this.electricball = this.electricGroup.create(this.damageItemDistance, this.damageItemHeight, 'newElectricBall').play('electricBallAnimation');
+            this.electricball.setScale(.5);
             this.createElectricballMovement(this.electricball.y);
 
             //set collision box
-            this.electricball.body.setSize(255,255);
+            this.electricball.body.setSize(100,100);
         }
 
         this.damageGroup.setVelocityX(-350);
