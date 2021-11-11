@@ -18,6 +18,8 @@ class PlayScene extends Phaser.Scene {
         this.foreground = null;
         this.sun = null;
         this.clouds = null;
+        this.birdsRight = null;
+        this.birdsLeft = null;
         this.music = null;
         this.player = null;
 
@@ -77,16 +79,20 @@ class PlayScene extends Phaser.Scene {
     preload() {
         this.load.audio('theme', 'assets/audio/mainMusic.wav');
 
+        this.load.image('topUI', 'assets/topUI.png');
         this.load.image('background', 'assets/newBackground.jpg');
         this.load.image('backgroundBuildings', 'assets/backgroundBuildings.png');
         this.load.image('foreground', 'assets/foreground.png');
         this.load.image('clouds', 'assets/clouds.png');
+        this.load.image('birdsLeft','assets/birdsLeft.png');
+        this.load.image('birdsRight','assets/birdsRight.png');
         this.load.image('sun', 'assets/sun.png');
         this.load.image('player', 'assets/horus.png');
+
         this.load.image('fireball', 'assets/fireball.png');
         this.load.image('electricball', 'assets/electricball.png');
+
         this.load.image('coins', 'assets/coin.png');
-        this.load.image('topUI', 'assets/topUI.png');
         this.load.image('horethBall','assets/horethBall.png');
         this.load.image('snake','assets/snake.png');
 
@@ -121,21 +127,14 @@ class PlayScene extends Phaser.Scene {
         this.goldCollectSound = this.sound.add('goldCollectSound');
 
         this.topUI = this.add.image(0, 360, 'topUI').setOrigin(0, 0.5);
-        this.scoreText = this.add.text(605, 16, '0', { fontSize: '40px', fill: 'white' }); 
+        this.scoreText = this.add.text(628, 16, '0', { fontSize: '40px', fill: 'white' }); 
         
         
         this.input.keyboard.on('keydown-SPACE', this.createHorethBall, this);
        // this.createHorethBallCollider();
            
 
-        this.createSnake();
-        this.moveSnake();
-
-       
         
-
-
-    
         
     }
 
@@ -144,6 +143,7 @@ class PlayScene extends Phaser.Scene {
         this.foreground.tilePositionX += 8.8;
         this.sun.tilePositionX += 0.05;
         this.clouds.tilePositionX += 1;
+       
         this.setControls();
         
         if(this.horethBall) {
@@ -159,6 +159,11 @@ class PlayScene extends Phaser.Scene {
             //console.log('check position');
             this.checkElectricBallPositionAndMove()
         
+        }
+
+        if (!this.snake) {
+            this.createSnake();
+            this.moveSnake();
         }
         
     }
@@ -180,9 +185,11 @@ class PlayScene extends Phaser.Scene {
 
 
         this.sun = this.add.tileSprite(800, 450, 2500, 1000, 'sun');
+        this.sun.setScale(.8);
+
         this.background = this.add.tileSprite(1250, 340, 2540, 720, 'backgroundBuildings');
         this.background.setScale(1);
-        this.sun.setScale(.8);
+        
         this.foreground = this.add.tileSprite(1250, 360, 2540, 720, 'foreground');
 
         this.clouds = this.add.tileSprite(1250, 360, 2540, 720, 'clouds');
@@ -352,14 +359,18 @@ class PlayScene extends Phaser.Scene {
         this.currentHorethBallNumber += 1;
         this.orbSound.play();
         
+        if (this.snake) {
+            console.log(this.playerDamageGroup, 'and', this.enemyGroup, "line");
+            this.physics.add.overlap(this.playerDamageGroup, this.enemyGroup, this.destroySnake, null, this);
+        }
     } 
 
         
 
-     this.physics.add.collider(this.enemyGroup, this.playerDamageGroup, function() {
-         console.log(this.playerDamageGroup);
-         console.log(this.enemyGroup);
-    });
+    //  this.physics.add.collider(this.enemyGroup, this.playerDamageGroup, function() {
+    //      console.log(this.playerDamageGroup);
+    //      console.log(this.enemyGroup);
+    // });
     
     }
 
@@ -367,11 +378,11 @@ class PlayScene extends Phaser.Scene {
     //console.log('removeHorethBall');
     //console.log(this.maxHorethBall);
 
-    if (this.horethBall.x > 1300 && this.horethBall.active) {
-         this.horethBall.destroy();
-         this.currentHorethBallNumber -= 1;
-         //console.log('hey');
-    }
+        if (this.horethBall.x > 1300 && this.horethBall.active) {
+            this.horethBall.destroy();
+            this.currentHorethBallNumber -= 1;
+            //console.log('hey');
+        }
     }
 
 
@@ -384,8 +395,6 @@ class PlayScene extends Phaser.Scene {
             this.snakeDistance = 1380;
        // } 
         
-        
-        
         //for (let i = 0; i <= 5; i++) {
             this.snake = this.enemyGroup.create(this.snakeDistance, 300, 'snake');
             this.snake.body.setSize(150,70);
@@ -396,15 +405,12 @@ class PlayScene extends Phaser.Scene {
         
     }
 
-    createSnakeCollider() {
+   
 
-        console.log('collider')
-        console.log(this.enemyGroup);
-        console.log(this.playerDamageGroup);
-
-            this.physics.add.collider(this.enemyGroup, this.playerDamageGroup, function() {
-            
-        });
+    destroySnake(playerDamage, enemy) {
+        enemy.disableBody(true, true);
+        console.log('fhsadf');
+        this.goldCollectSound.play();
     }
 
 
