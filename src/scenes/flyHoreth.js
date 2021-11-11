@@ -48,6 +48,7 @@ class PlayScene extends Phaser.Scene {
         this.fireButton;
         this.maxHorethBall = 1;
         this.currentHorethBallNumber = 0;
+        this.bluntImpactSound = null;
 
         //score
         this.score = null;
@@ -94,6 +95,7 @@ class PlayScene extends Phaser.Scene {
 
         this.load.image('coins', 'assets/coin.png');
         this.load.image('horethBall','assets/horethBall.png');
+        this.load.audio('bluntImpactSound', 'assets/audio/bluntImpactSound.mp3');
         this.load.image('snake','assets/snake.png');
 
         this.load.spritesheet("newFireBall", "assets/newFireBall.png", { frameWidth: 300, frameHeight: 300 });
@@ -129,8 +131,9 @@ class PlayScene extends Phaser.Scene {
         this.topUI = this.add.image(0, 360, 'topUI').setOrigin(0, 0.5);
         this.scoreText = this.add.text(628, 16, '0', { fontSize: '40px', fill: 'white' }); 
         
-        
+        this.bluntImpactSound = this.sound.add('bluntImpactSound');
         this.input.keyboard.on('keydown-SPACE', this.createHorethBall, this);
+        
        // this.createHorethBallCollider();
            
 
@@ -161,14 +164,19 @@ class PlayScene extends Phaser.Scene {
         
         }
 
+        let tracker = 0;
+
         if (!this.snake) {
-            this.createSnake();
-            this.moveSnake();
+                this.createSnake();
+                this.moveSnake();   
         }
         
     }
 
-    
+    bluntImpactTrigger() {
+        console.log('trigger');
+        this.bluntImpactSound.play();
+    }
 
     //Game Functions for Phaser function "create"
     createPlayer() {
@@ -382,12 +390,14 @@ class PlayScene extends Phaser.Scene {
             this.horethBall.destroy();
             this.currentHorethBallNumber -= 1;
             //console.log('hey');
-        }
+        } 
     }
 
 
-    //---------------------create enemies------------------------//
+    //---------------------create and destroy enemies------------------------//
     //1 
+
+
     createSnake() {
         this.enemyGroup = this.physics.add.group();
 
@@ -409,8 +419,25 @@ class PlayScene extends Phaser.Scene {
 
     destroySnake(playerDamage, enemy) {
         enemy.disableBody(true, true);
+        playerDamage.disableBody(true, true);
         console.log('fhsadf');
-        this.goldCollectSound.play();
+        this.bluntImpactSound.play();
+        //this.goldCollectSound.play();
+
+        //Horethball also destroyed
+        playerDamage.disableBody(true, true);
+        this.currentHorethBallNumber -= 1;
+
+        
+        this.time.addEvent({
+            delay: 15500,
+            callback: ()=>{
+                this.snake = false;
+            },
+            loop: false
+        })
+        
+        
     }
 
 
