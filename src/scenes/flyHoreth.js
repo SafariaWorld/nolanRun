@@ -1,9 +1,7 @@
 import Phaser from "Phaser";
 import WebFontFile from '../WebFontFile';
 
-
-
-//** problem with tracking snake bolt and repeating */
+//*need to organize snakebolt code *//
 
 class PlayScene extends Phaser.Scene {
 
@@ -68,6 +66,9 @@ class PlayScene extends Phaser.Scene {
         this.snakeBoltObject = null;
         this.snakeBoltTracker = 0;
 
+        //enemy Diamond
+        this.patrolDiamond = null;
+
         //fireball Animation
         this.newFireBall = null;
         this.fireAnimation = null;
@@ -99,7 +100,9 @@ class PlayScene extends Phaser.Scene {
         this.load.image('coins', 'assets/coin.png');
         this.load.image('horethBall','assets/horethBall.png');
         this.load.audio('bluntImpactSound', 'assets/audio/bluntImpactSound.mp3');
+
         this.load.image('snake','assets/snake.png');
+        this.load.image('patrolDiamond', 'assets/patrolDiamond.png');
 
         this.load.spritesheet("newFireBall", "assets/newFireBall.png", { frameWidth: 300, frameHeight: 300 });
         this.load.spritesheet("newElectricBall", "assets/newElectricBall.png", { frameWidth: 300, frameHeight: 300 });
@@ -140,7 +143,8 @@ class PlayScene extends Phaser.Scene {
         this.input.keyboard.on('keydown-SPACE', this.createHorethBall, this);
 
         
-       // this.createHorethBallCollider();           
+       // this.createHorethBallCollider();       
+       this.createPatrolDiamond();
 
         
         
@@ -196,6 +200,13 @@ class PlayScene extends Phaser.Scene {
             this.snakeBolt = this.createSnakeBolt();
         }
         
+    }
+
+    //after update
+
+    createPatrolDiamond() {
+        this.patrolDiamond = this.add.sprite(400,400, 'patrolDiamond');
+        this.patrolDiamond.setScale(0.65);   
     }
 
     createSnakeBolt() {
