@@ -3,9 +3,7 @@ import WebFontFile from '../WebFontFile';
 
 
 
-//****starting to fuck with the Horeth Orb Group settings****//
-//*** that's why there is copy 2 version of this document *//
-//*** Now adding movement to electric ball**/
+//** problem with tracking snake bolt and repeating */
 
 class PlayScene extends Phaser.Scene {
 
@@ -186,7 +184,7 @@ class PlayScene extends Phaser.Scene {
             if (this.snakeBoltObject.x < 0) {
                 console.log('destroy');
                 this.snakeBoltObject.destroy();
-                this.snakeBoltTracker = 1;
+                this.snakeBoltTracker = 0;
             }
         }
 
