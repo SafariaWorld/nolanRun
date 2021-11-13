@@ -122,9 +122,9 @@ class PlayScene extends Phaser.Scene {
     create() {
         this.music = this.sound.add('theme', {volume: 0.2});
         //this.music.play();
-        this.createBackground()
+        this.createBackground();
         this.createPlayer();
-        this.createCursorAndKeyUpKeyDown()
+        this.createCursorAndKeyUpKeyDown();
         
         this.createFireAndElectricBall();
         this.createDamageCollider();
@@ -168,6 +168,10 @@ class PlayScene extends Phaser.Scene {
         if (this.snake) {
             this.checkAndStopSnake();
         }
+
+        if (this.patrolDiamond) {
+            this.checkAndStopPatrolDiamond();
+        }
         
         if (this.electricball) {
             //console.log('check position');
@@ -205,8 +209,38 @@ class PlayScene extends Phaser.Scene {
     //after update
 
     createPatrolDiamond() {
-        this.patrolDiamond = this.add.sprite(400,400, 'patrolDiamond');
-        this.patrolDiamond.setScale(0.65);   
+        this.patrolDiamond = this.damageGroup.create(1400,550, 'patrolDiamond');
+        this.patrolDiamond.setScale(0.65);     
+        this.movePatrolDiamond(); 
+    }
+
+    movePatrolDiamond() {
+        this.patrolDiamond.setVelocityX(-300);
+    } 
+
+    checkAndStopPatrolDiamond() {
+        if (this.patrolDiamond.x < 900) {
+            this.patrolDiamond.setVelocityX(0);
+        }
+
+        if (this.patrolDiamond.y < 550) {
+            console.log(this.patrolDiamond.y);
+                    this.patrolDiamond.setVelocityY(0);
+                    this.patrolDiamond.setVelocityX(0);
+        }
+
+        if (this.patrolDiamond.x < 900 && this.patrolDiamond.y > 549) {
+            this.time.addEvent({
+                delay: 1000,
+                callback: ()=>{
+                    this.patrolDiamond.setVelocityY(-600);
+                    this.patrolDiamond.setVelocityX(-400);
+                },
+                loop: false
+            })
+        } 
+
+        
     }
 
     createSnakeBolt() {
