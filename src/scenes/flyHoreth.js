@@ -188,18 +188,19 @@ class PlayScene extends Phaser.Scene {
 
      
         if (this.snakeBoltObject) {
-            console.log('run');
+            
             if (this.snakeBoltObject.x < 0) {
-                console.log('destroy');
-                this.snakeBoltObject.destroy();
-                this.snakeBoltTracker = 0;
+                this.destroySnakeBolt();
             }
+                
+            
         }
 
         if (!this.snakeBoltObject) {
             this.snakeBoltTracker = 0;
         }
 
+        //tracks for snakebolt and if a snake exists to shoot a snakebolt
         if (this.snakeBoltTracker < 1 && this.snakeTracker > 0) {
             this.snakeBolt = this.createSnakeBolt();
         }
@@ -240,26 +241,6 @@ class PlayScene extends Phaser.Scene {
             })
         } 
 
-        
-    }
-
-    createSnakeBolt() {
-        this.snakeBoltTracker += 1;
-        console.log(this.snakeBoltTracker);
-        console.log('check 1');
-        this.snakeBolt = {
-            key: 'snakeBoltAnimation',
-            frames: this.anims.generateFrameNumbers('snakeBolt', {start:0, end:2, first:0}),
-            frameRate: 2,
-            repeat: -1
-        }
-
-        console.log('check 2');
-        this.anims.create(this.snakeBolt);
-        console.log('check 3');
-        this.snakeBoltObject = this.damageGroup.create(this.snake.x, this.snake.y, 'snakeBolt').play('snakeBoltAnimation');
-        this.snakeBoltObject.setScale(.5);
-        this.snakeBoltObject.setVelocityX(-400);
         
     }
 
@@ -478,7 +459,7 @@ class PlayScene extends Phaser.Scene {
     }
 
 
-    //---------------------create and destroy enemies------------------------//
+    //---------------------Snake functionality------------------------//
     //1 
 
 
@@ -527,6 +508,31 @@ class PlayScene extends Phaser.Scene {
         })
         
         
+    }
+
+    createSnakeBolt() {
+        this.snakeBoltTracker += 1;
+        console.log(this.snakeBoltTracker);
+        console.log('check 1');
+        this.snakeBolt = {
+            key: 'snakeBoltAnimation',
+            frames: this.anims.generateFrameNumbers('snakeBolt', {start:0, end:2, first:0}),
+            frameRate: 2,
+            repeat: -1
+        }
+
+        console.log('check 2');
+        this.anims.create(this.snakeBolt);
+        console.log('check 3');
+        this.snakeBoltObject = this.damageGroup.create(this.snake.x, this.snake.y, 'snakeBolt').play('snakeBoltAnimation');
+        this.snakeBoltObject.setScale(.5);
+        this.snakeBoltObject.setVelocityX(-400);
+        
+    }
+
+    destroySnakeBolt() {
+        this.snakeBoltObject.destroy();
+        this.snakeBoltTracker = 0;
     }
 
     bluntImpactTrigger() {
