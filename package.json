@@ -5,8 +5,10 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
+    "postinstall": "npm install --prefix ./backend",
     "build": "webpack --config webpack.prod.js",
-    "dev": "webpack-dev-server --config webpack.common.js --watch"
+    "dev": "webpack-dev-server --config webpack.common.js --watch",
+    "start": "node ./backend/server.js"
   },
   "author": "",
   "license": "ISC",
@@ -14,14 +16,6 @@
     "phaser": "^3.24.1",
     "webfontloader": "^1.6.28",
     "webpack-merge": "^5.1.4"
-  },
-  "engine": {
-    "name": "myapp",
-    "description": "a really cool app",
-    "version": "1.0.0",
-    "engines": {
-      "node": "14.18.0"
-    }
   },
   "devDependencies": {
     "@babel/core": "^7.11.6",
@@ -33,7 +27,6 @@
     "terser-webpack-plugin": "^4.2.2",
     "webpack": "^4.44.2",
     "webpack-cli": "^3.3.12",
-    "webpack-dev-server": "^3.11.0",
-    "node": "14.18.0"
+    "webpack-dev-server": "^3.11.0"
   }
 }
