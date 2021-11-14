@@ -1,7 +1,7 @@
 import Phaser from "phaser";
 import WebFontFile from '../WebFontFile';
 
-//*need to organize snakebolt code *//
+
 
 class PlayScene extends Phaser.Scene {
 
@@ -18,6 +18,7 @@ class PlayScene extends Phaser.Scene {
         this.birdsLeft = null;
         this.music = null;
         this.player = null;
+        this.playerVersion2 = null;
 
         //controls
         this.cursors = null;
@@ -93,6 +94,7 @@ class PlayScene extends Phaser.Scene {
         this.load.image('birdsRight','assets/birdsRight.png');
         this.load.image('sun', 'assets/sun.png');
         this.load.image('player', 'assets/horus.png');
+        this.load.spritesheet('playerVersion2', 'assets/horusSpriteSheet.png', { frameWidth: 370, frameHeight: 300 });
 
         this.load.image('fireball', 'assets/fireball.png');
         this.load.image('electricball', 'assets/electricball.png');
@@ -175,7 +177,7 @@ class PlayScene extends Phaser.Scene {
         
         if (this.electricball) {
             //console.log('check position');
-            this.checkElectricBallPositionAndMove()
+            this.checkElectricBallPositionAndMove();
         
         }
 
@@ -247,7 +249,8 @@ class PlayScene extends Phaser.Scene {
     //Game Functions for Phaser function "create"
     createPlayer() {
 
-        this.player = this.physics.add.sprite(100, 250, 'player');
+        this.player = this.physics.add.sprite(100, 250, 'playerVersion2');
+        this.player.setFrame(1);
         this.player.setScale(0.4);
         this.player.setCollideWorldBounds(true);
         this.player.body.setSize(255,45);
@@ -590,9 +593,11 @@ class PlayScene extends Phaser.Scene {
         } 
         else if (this.keyUP.isDown) {
             this.player.setVelocityY(-325);
+            this.player.setFrame(0);
         }
         else if (this.keyDOWN.isDown) {
             this.player.setVelocityY(325);
+            this.player.setFrame(2);
         }
         else {
             this.player.setVelocityY(0);
@@ -601,6 +606,7 @@ class PlayScene extends Phaser.Scene {
                 this.player.setVelocityX(0);
                 velocityStopper == false;
             }
+            this.player.setFrame(1);
             
         }
 
