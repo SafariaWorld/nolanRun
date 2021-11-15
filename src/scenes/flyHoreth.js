@@ -69,6 +69,10 @@ class PlayScene extends Phaser.Scene {
 
         //enemy Diamond
         this.patrolDiamond = null;
+        this.move1 = false;
+        this.move2 = false;
+        this.move3 = false;
+        this.move4 = false;
 
         //fireball Animation
         this.newFireBall = null;
@@ -77,6 +81,10 @@ class PlayScene extends Phaser.Scene {
         //electricball Animation
         this.newElectricBall = null;
         this.ElectricAnimation = null;
+
+        //camera position
+        this.screenCenterX = null;
+        this.screenCenterY = null;
     }
 
     
@@ -137,17 +145,25 @@ class PlayScene extends Phaser.Scene {
         this.orbSound = this.sound.add('orbSound', {volume: 0.8});
         this.goldCollectSound = this.sound.add('goldCollectSound');
 
+        //UI
         this.topUI = this.add.image(0, 360, 'topUI').setOrigin(0, 0.5);
         console.log(this.width);
-        this.scoreText = this.add.text(300, 16, '0', { fontSize: '40px', fill: 'white' }); 
+
+        //create screen positions
+        this.screenCenterX = (this.cameras.main.worldView.x + this.cameras.main.width / 2) - 13 ;
+        this.screenCenterY = this.cameras.main.worldView.y + 20;
+        this.scoreText = this.add.text(this.screenCenterX, this.screenCenterY, '0', { fontSize: '40px', fill: 'white' }); 
         
         this.bluntImpactSound = this.sound.add('bluntImpactSound');
         this.input.keyboard.on('keydown-SPACE', this.createHorethBall, this);
 
         
-       // this.createHorethBallCollider();       
-       this.createPatrolDiamond();
+        
 
+
+        // this.createHorethBallCollider();       
+        this.createPatrolDiamond();
+        
         
         
     }
@@ -209,7 +225,7 @@ class PlayScene extends Phaser.Scene {
         
     }
 
-    //after update
+    //*********************after update**************************//
 
     createPatrolDiamond() {
         this.patrolDiamond = this.damageGroup.create(1400,550, 'patrolDiamond');
@@ -222,17 +238,16 @@ class PlayScene extends Phaser.Scene {
     } 
 
     checkAndStopPatrolDiamond() {
+        
+        //stops Diamond
         if (this.patrolDiamond.x < 900) {
             this.patrolDiamond.setVelocityX(0);
         }
-
-        if (this.patrolDiamond.y < 550) {
-            console.log(this.patrolDiamond.y);
-                    this.patrolDiamond.setVelocityY(0);
-                    this.patrolDiamond.setVelocityX(0);
-        }
-
-        if (this.patrolDiamond.x < 900 && this.patrolDiamond.y > 549) {
+         
+        //Diamond moves up this.move1
+        if (this.patrolDiamond.x < 900 && this.patrolDiamond.y > 549 && this.move1 == false) {
+            console.log("test");
+            this.move1 = true;
             this.time.addEvent({
                 delay: 1000,
                 callback: ()=>{
@@ -242,6 +257,24 @@ class PlayScene extends Phaser.Scene {
                 loop: false
             })
         } 
+
+        //Diamond moves down this,move2
+        if (this.patrolDiamond.y < 240 && this.move2 == false) {
+            this.move2 = true;
+            console.log(this.patrolDiamond.y);
+                    this.patrolDiamond.setVelocityY(0);
+                    this.patrolDiamond.setVelocityX(0);
+                    this.time.addEvent({
+                        delay: 1000,
+                        callback: ()=>{
+                            this.patrolDiamond.setVelocityY(600);
+                            
+                        },
+                        loop: false
+                    })
+        }
+
+        
 
         
     }
@@ -412,6 +445,11 @@ class PlayScene extends Phaser.Scene {
         collectGroup.disableBody(true, true);
         this.score += 1;
         this.scoreText.setText(this.score);
+
+        if (this.score >= 10) {
+            this.scoreText.x = this.screenCenterX - 8;
+        }
+
         this.goldCollectSound.play();
     }
 
@@ -429,11 +467,11 @@ class PlayScene extends Phaser.Scene {
 
         console.log(this.currentHorethBallNumber, this.maxHorethBall);
         if (this.currentHorethBallNumber < this.maxHorethBall) {
-        this.horethBall = this.playerDamageGroup.create(this.player.x, this.player.y, 'horethBall');
-        this.horethBall.setScale(.3);
-        this.playerDamageGroup.setVelocityX(900); 
-        this.currentHorethBallNumber += 1;
-        this.orbSound.play();
+            this.horethBall = this.playerDamageGroup.create(this.player.x, this.player.y, 'horethBall');
+            this.horethBall.setScale(.3);
+            this.playerDamageGroup.setVelocityX(900); 
+            this.currentHorethBallNumber += 1;
+            this.orbSound.play();
         
         if (this.snake) {
             console.log(this.playerDamageGroup, 'and', this.enemyGroup, "line");
@@ -481,7 +519,6 @@ class PlayScene extends Phaser.Scene {
         //}
         
         this.enemyGroup.setVelocityY(20);
-        
     }
 
    
@@ -499,7 +536,11 @@ class PlayScene extends Phaser.Scene {
         this.snakeTracker -= 1;
 
         this.score += 1;
+        
         this.scoreText.setText(this.score);
+        if (this.score >= 10) {
+            this.scoreText.x = this.screenCenterX - 8;
+        }
 
         
         this.time.addEvent({
@@ -551,7 +592,7 @@ class PlayScene extends Phaser.Scene {
     checkAndStopSnake() {
         //console.log(this.snake.y);
         
-        if (this.snake.x == 1100) {
+        if (this.snake.x < 1100) {
             this.snake.setVelocityX(0);
         }
 
@@ -620,9 +661,6 @@ class PlayScene extends Phaser.Scene {
             this.player.setVelocityX(425);
         }
     }
-
-
-    
 
 }
 
