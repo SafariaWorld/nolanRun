@@ -102,7 +102,7 @@ class PlayScene extends Phaser.Scene {
         this.load.image('birdsRight','assets/birdsRight.png');
         this.load.image('sun', 'assets/sun.png');
         this.load.image('player', 'assets/horus.png');
-        this.load.spritesheet('playerVersion2', 'assets/horusSpriteSheet.png', { frameWidth: 370, frameHeight: 300 });
+        this.load.spritesheet('playerVersion2', 'assets/horusSpriteSheet.png', { frameWidth: 370, frameHeight: 500 });
 
         this.load.image('fireball', 'assets/fireball.png');
         this.load.image('electricball', 'assets/electricball.png');
@@ -150,21 +150,15 @@ class PlayScene extends Phaser.Scene {
         console.log(this.width);
 
         //create screen positions
-        this.screenCenterX = (this.cameras.main.worldView.x + this.cameras.main.width / 2) - 13 ;
+        this.screenCenterX = (this.cameras.main.worldView.x + this.cameras.main.width / 2) - 13;
         this.screenCenterY = this.cameras.main.worldView.y + 20;
         this.scoreText = this.add.text(this.screenCenterX, this.screenCenterY, '0', { fontSize: '40px', fill: 'white' }); 
         
         this.bluntImpactSound = this.sound.add('bluntImpactSound');
         this.input.keyboard.on('keydown-SPACE', this.createHorethBall, this);
 
-        
-        
-
-
         // this.createHorethBallCollider();       
         this.createPatrolDiamond();
-        
-        
         
     }
 
@@ -238,46 +232,76 @@ class PlayScene extends Phaser.Scene {
     } 
 
     checkAndStopPatrolDiamond() {
-        
-        //stops Diamond
         if (this.patrolDiamond.x < 900) {
             this.patrolDiamond.setVelocityX(0);
         }
-         
-        //Diamond moves up this.move1
-        if (this.patrolDiamond.x < 900 && this.patrolDiamond.y > 549 && this.move1 == false) {
-            console.log("test");
-            this.move1 = true;
-            this.time.addEvent({
-                delay: 1000,
-                callback: ()=>{
-                    this.patrolDiamond.setVelocityY(-600);
-                    this.patrolDiamond.setVelocityX(-400);
-                },
-                loop: false
-            })
-        } 
 
-        //Diamond moves down this,move2
-        if (this.patrolDiamond.y < 240 && this.move2 == false) {
-            this.move2 = true;
-            console.log(this.patrolDiamond.y);
-                    this.patrolDiamond.setVelocityY(0);
-                    this.patrolDiamond.setVelocityX(0);
-                    this.time.addEvent({
-                        delay: 1000,
-                        callback: ()=>{
-                            this.patrolDiamond.setVelocityY(600);
-                            
-                        },
-                        loop: false
-                    })
-        }
-
-        
-
-        
+        console.log(this.patrolDiamond.ve);
     }
+
+    // checkAndStopPatrolDiamond() {
+        
+    //     let reset = false;
+
+    //     if (reset == true) {
+    //         resetMovement();
+    //     }
+
+
+    //     //stops Diamond
+    //     if (this.patrolDiamond.x < 900) {
+    //         this.patrolDiamond.setVelocityX(0);
+    //     }
+         
+    //     //Diamond moves up this.move1
+    //     if (this.patrolDiamond.x < 900 && this.patrolDiamond.y > 549 && this.move1 == false) {
+    //         console.log("test");
+    //         this.move1 = true;
+    //         this.time.addEvent({
+    //             delay: 2000,
+    //             callback: ()=>{
+    //                 this.patrolDiamond.setVelocityY(-600);
+    //                 this.patrolDiamond.setVelocityX(-400);
+    //             },
+    //             loop: false
+    //         })
+    //     } 
+
+    //     //Diamond moves down this,move2
+    //     if (this.patrolDiamond.y < 240 && this.move2 == false) {
+    //         this.move2 = true;
+    //         console.log(this.patrolDiamond.y);
+    //                 this.patrolDiamond.setVelocityY(0);
+    //                 this.patrolDiamond.setVelocityX(0);
+    //                 this.time.addEvent({
+    //                     delay: 2000,
+    //                     callback: ()=>{
+    //                         this.patrolDiamond.setVelocityY(600);
+                            
+    //                     },
+    //                     loop: false
+    //                 })
+    //     }
+
+        
+    //     if (this.patrolDiamond.y > 550 && this.move2 == true) {
+    //         this.move2 == false;
+    //         console.log('fklasjflkjakdfjsalkfj;');
+    //         console.log(this.patrolDiamond.y);
+    //         this.patrolDiamond.setVelocityY(0);
+    //         this.patrolDiamond.setVelocityX(0);
+    //         this.reset = true;
+    //     }
+
+
+    //     function resetMovement() {
+    //         this.move1 = false;
+    //         this.move2 = false;
+    //         this.move3 = false; 
+
+    //         console.log('reset');
+    //     }
+    // }
 
     //Game Functions for Phaser function "create"
     createPlayer() {
@@ -384,8 +408,6 @@ class PlayScene extends Phaser.Scene {
     }
 
     checkElectricBallPositionAndMove() {
-
-        
         //console.log(this.electricball.y);
 
         //console.log(this.damageGroup.getChildren().length);
@@ -623,6 +645,7 @@ class PlayScene extends Phaser.Scene {
         if (left.isDown) {
             this.player.setVelocityX(-295);
             velocityStopper = true;
+            this.player.setFrame(3);
             
             
             // if (velocityStopper == true) {
