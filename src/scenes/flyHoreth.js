@@ -6,7 +6,7 @@ import WebFontFile from '../WebFontFile';
 class PlayScene extends Phaser.Scene {
 
     constructor() {
-        super('PlayScene');
+        super({key: 'PlayScene'});
        
 
         this.background = null;
@@ -48,7 +48,7 @@ class PlayScene extends Phaser.Scene {
         this.bluntImpactSound = null;
 
         //score
-        this.score = null;
+        this.score = 0;
         this.scoreText = null;
 
         //font
@@ -130,6 +130,7 @@ class PlayScene extends Phaser.Scene {
     }
 
     create() {
+      console.log(this.snake);
         this.music = this.sound.add('theme', {volume: 0.2});
         //this.music.play();
         this.createBackground();
@@ -147,7 +148,6 @@ class PlayScene extends Phaser.Scene {
 
         //UI
         this.topUI = this.add.image(0, 360, 'topUI').setOrigin(0, 0.5);
-        console.log(this.width);
 
         //create screen positions
         this.screenCenterX = (this.cameras.main.worldView.x + this.cameras.main.width / 2) - 13 ;
@@ -159,12 +159,8 @@ class PlayScene extends Phaser.Scene {
 
         
         
-
-
         // this.createHorethBallCollider();       
         this.createPatrolDiamond();
-        
-        
         
     }
 
@@ -188,9 +184,9 @@ class PlayScene extends Phaser.Scene {
         }
 
         if (this.patrolDiamond) {
+
             this.checkAndStopPatrolDiamond();
         }
-        
         if (this.electricball) {
             //console.log('check position');
             this.checkElectricBallPositionAndMove();
@@ -373,8 +369,6 @@ class PlayScene extends Phaser.Scene {
 
     createElectricballMovement() {
 
-       console.log('fsadf');
-
         if (this.electricball.y > 600) {
             this.electricball.setVelocityY(200);
         } else {
@@ -406,14 +400,16 @@ class PlayScene extends Phaser.Scene {
     }
 
     createDamageCollider() {
-        this.physics.add.collider(this.player, this.damageGroup, function() {
+        this.physics.add.collider(this.player, this.damageGroup, ()  => {
             this.physics.pause();
+            this.endScreen();
         });
     }
 
     createElectricCollider() {
-        this.physics.add.collider(this.player, this.electricGroup, function() {
+        this.physics.add.collider(this.player, this.electricGroup, () => {
             this.physics.pause();
+            this.endScreen();
         });
     }
 
@@ -512,6 +508,7 @@ class PlayScene extends Phaser.Scene {
        // } 
         
         //for (let i = 0; i <= 5; i++) {
+          console.log("break 1")
             this.snake = this.enemyGroup.create(this.snakeDistance, 300, 'snake');
             this.snake.body.setSize(150,70);
             this.snakeDistance += 100;
@@ -557,7 +554,6 @@ class PlayScene extends Phaser.Scene {
     createSnakeBolt() {
         this.snakeBoltTracker += 1;
         console.log(this.snakeBoltTracker);
-        console.log('check 1');
         this.snakeBolt = {
             key: 'snakeBoltAnimation',
             frames: this.anims.generateFrameNumbers('snakeBolt', {start:0, end:2, first:0}),
@@ -565,9 +561,7 @@ class PlayScene extends Phaser.Scene {
             repeat: -1
         }
 
-        console.log('check 2');
         this.anims.create(this.snakeBolt);
-        console.log('check 3');
         this.snakeBoltObject = this.damageGroup.create(this.snake.x, this.snake.y, 'snakeBolt').play('snakeBoltAnimation');
         this.snakeBoltObject.setScale(.5);
         this.snakeBoltObject.setVelocityX(-400);
@@ -591,7 +585,6 @@ class PlayScene extends Phaser.Scene {
 
     checkAndStopSnake() {
         //console.log(this.snake.y);
-        
         if (this.snake.x < 1100) {
             this.snake.setVelocityX(0);
         }
@@ -660,6 +653,34 @@ class PlayScene extends Phaser.Scene {
             this.player.setVelocityY(425);
             this.player.setVelocityX(425);
         }
+    }
+
+    endScreen() {
+        const { width, height } = this.sys.game.canvas;
+
+        this.add.text(width / 2, height / 2 - 150, 'Your Score: ' + this.score, 
+        { fill: '#000000', fontSize: '60px'})
+            .setInteractive()
+            .setOrigin(.5, 0);
+
+        this.add.text(width / 2, height / 2, 'PLAY AGAIN BUTTON IMAGE', 
+        { fill: '#000000', fontSize: '30px'})
+            .setInteractive()
+            .setOrigin(.5, 0)
+            .on('pointerdown', this.restart, this)
+    }
+
+    restart() {
+        this.score = 0;
+        this.snake = null;
+        this.snakeBoltTracker = 0;
+        this.currentHorethBallNumber = 0;
+        this.move1 = false;
+        this.move2 = false;
+        this.move3 = false;
+        this.move4 = false;
+        this.scene.restart();
+
     }
 
 }
