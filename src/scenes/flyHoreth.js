@@ -73,6 +73,7 @@ class PlayScene extends Phaser.Scene {
         this.move2 = false;
         this.move3 = false;
         this.move4 = false;
+        this.initialMoveCheckDiamond = false;
 
         //fireball Animation
         this.newFireBall = null;
@@ -182,13 +183,22 @@ class PlayScene extends Phaser.Scene {
         }
 
         if (this.patrolDiamond) {
-            this.checkAndStopPatrolDiamond();
+            
+            if (this.initialMoveCheckDiamond == false) {
+                console.log('initial move check');
+                this.initialPatrolDiamondStop();
+            }
+            
+            if (this.initialMoveCheckDiamond == true) {
+                console.log('after move check');
+                this.checkAndStopPatrolDiamond();
+            }
+            
         }
         
         if (this.electricball) {
             //console.log('check position');
             this.checkElectricBallPositionAndMove();
-        
         }
 
         let tracker = 0;
@@ -204,7 +214,6 @@ class PlayScene extends Phaser.Scene {
             if (this.snakeBoltObject.x < 0) {
                 this.destroySnakeBolt();
             }
-                
             
         }
 
@@ -231,14 +240,42 @@ class PlayScene extends Phaser.Scene {
         this.patrolDiamond.setVelocityX(-300);
     } 
 
-    checkAndStopPatrolDiamond() {
+    initialPatrolDiamondStop() {
         if (this.patrolDiamond.x < 900) {
             this.patrolDiamond.setVelocityX(0);
+            this.patrolDiamond.setVelocityY(0);
+            this.initialMoveCheckDiamond = true;
+        }
+    }
+
+    checkAndStopPatrolDiamond() {
+
+        //****Setting Boundaries****/
+
+        //set top
+        if (this.patrolDiamond.y < 250) {
+            this.patrolDiamond.setVelocityX(0);
+            this.patrolDiamond.setVelocityY(0);
         }
 
-       
+        //set bottom
+        if (this.patrolDiamond.y > 900) {
+            this.patrolDiamond.setVelocityX(0);
+            this.patrolDiamond.setVelocityY(0);
+        }
 
-        console.log(this.patrolDiamond.x);
+        //set right
+        if (this.patrolDiamond.x < 100) {
+            this.patrolDiamond.setVelocityX(0);
+            this.patrolDiamond.setVelocityY(0);
+        }
+
+        //set left
+        if (this.patrolDiamond.x > 300) {
+            this.patrolDiamond.setVelocityX(0);
+            this.patrolDiamond.setVelocityY(0);
+        }
+
     }
 
     // checkAndStopPatrolDiamond() {
