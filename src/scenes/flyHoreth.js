@@ -236,7 +236,9 @@ class PlayScene extends Phaser.Scene {
             this.patrolDiamond.setVelocityX(0);
         }
 
-        console.log(this.patrolDiamond.ve);
+       
+
+        console.log(this.patrolDiamond.x);
     }
 
     // checkAndStopPatrolDiamond() {
