@@ -18,7 +18,7 @@ class PlayScene extends Phaser.Scene {
         this.birdsLeft = null;
         this.music = null;
         this.player = null;
-        this.playerVersion2 = null;
+        this.playerVersion2 = null; //check on this to replace with original player
 
         //controls
         this.cursors = null;
@@ -59,6 +59,7 @@ class PlayScene extends Phaser.Scene {
 
         //enemies
         this.snake = null;
+        this.snakeVersion2 = null;
         this.enemyGroup = null;
         this.snakeDistance = null;
         this.snakeTracker = 0;
@@ -66,6 +67,7 @@ class PlayScene extends Phaser.Scene {
         this.snakeBoltAnimation = null;
         this.snakeBoltObject = null;
         this.snakeBoltTracker = 0;
+        
 
         //enemy Diamond
         this.patrolDiamond = null;
@@ -73,7 +75,15 @@ class PlayScene extends Phaser.Scene {
         this.move2 = false;
         this.move3 = false;
         this.move4 = false;
+        this.movePicker = null;
+        this.patrolDiamondMoving = false;
         this.initialMoveCheckDiamond = false;
+        this.line1 = null;
+        this.line2 = null;
+        this.follower = null;
+        this.path = null;
+        this.bounds = null;
+        this.graphics = null;
 
         //fireball Animation
         this.newFireBall = null;
@@ -104,6 +114,7 @@ class PlayScene extends Phaser.Scene {
         this.load.image('sun', 'assets/sun.png');
         this.load.image('player', 'assets/horus.png');
         this.load.spritesheet('playerVersion2', 'assets/horusSpriteSheet.png', { frameWidth: 370, frameHeight: 500 });
+        
 
         this.load.image('fireball', 'assets/fireball.png');
         this.load.image('electricball', 'assets/electricball.png');
@@ -112,7 +123,9 @@ class PlayScene extends Phaser.Scene {
         this.load.image('horethBall','assets/horethBall.png');
         this.load.audio('bluntImpactSound', 'assets/audio/bluntImpactSound.mp3');
 
-        this.load.image('snake','assets/snake.png');
+        //this.load.image('snake','assets/snake.png');
+    
+        this.load.spritesheet('snake', 'assets/snakeSpriteSheet.png', { frameWidth: 330, frameHeight: 165 });
         this.load.image('patrolDiamond', 'assets/patrolDiamond.png');
 
         this.load.spritesheet("newFireBall", "assets/newFireBall.png", { frameWidth: 300, frameHeight: 300 });
@@ -148,7 +161,7 @@ class PlayScene extends Phaser.Scene {
 
         //UI
         this.topUI = this.add.image(0, 360, 'topUI').setOrigin(0, 0.5);
-        console.log(this.width);
+        //console.log(this.width);
 
         //create screen positions
         this.screenCenterX = (this.cameras.main.worldView.x + this.cameras.main.width / 2) - 13;
@@ -160,6 +173,7 @@ class PlayScene extends Phaser.Scene {
 
         // this.createHorethBallCollider();       
         this.createPatrolDiamond();
+        this.createPathing();
         
     }
 
@@ -182,17 +196,17 @@ class PlayScene extends Phaser.Scene {
             this.checkAndStopSnake();
         }
 
+        //checking for initial move and then setting boundaries after first move
         if (this.patrolDiamond) {
             
             if (this.initialMoveCheckDiamond == false) {
-                console.log('initial move check');
                 this.initialPatrolDiamondStop();
             }
             
-            if (this.initialMoveCheckDiamond == true) {
-                console.log('after move check');
-                this.checkAndStopPatrolDiamond();
-            }
+            // if (this.initialMoveCheckDiamond == true) {
+
+           
+            // }
             
         }
         
@@ -200,7 +214,7 @@ class PlayScene extends Phaser.Scene {
             //console.log('check position');
             this.checkElectricBallPositionAndMove();
         }
-
+        
         let tracker = 0;
 
         if (!this.snake) {
@@ -225,11 +239,63 @@ class PlayScene extends Phaser.Scene {
         if (this.snakeBoltTracker < 1 && this.snakeTracker > 0) {
             this.snakeBolt = this.createSnakeBolt();
         }
+
+
+        //testing in update pathing
+        this.graphics.clear();
+
+    //  Draw the bounds
+        this.graphics.lineStyle(1, 0x00ff00, 1).strokeRectShape(this.bounds);
+
+        this.graphics.lineStyle(2, 0xffffff, 1);
+
+        this.path.draw(this.graphics);
+
+        this.path.getPoint(this.follower.t, this.follower.vec);
+
+        this.graphics.fillStyle(0xff0000, 1);
+        this.graphics.fillRect(this.follower.vec.x - 8, this.follower.vec.y - 8, 16, 16);
         
     }
 
     //*********************after update**************************//
 
+    //testing new methods for pathing
+
+    createPathing() {
+        this.graphics = this.add.graphics();
+
+        this.bounds = new Phaser.Geom.Rectangle();
+
+
+        this.follower = { t: 0, vec: new Phaser.Math.Vector2() };
+
+        this.line1 = new Phaser.Curves.Line([333,1100,500,200]);
+        //this.line2 = new Phaser.Curves.Line([200,300,600,500]);
+
+        this.path = this.add.path();
+
+        this.path.add(this.line1);
+        //this.path.add(this.line2);
+
+        this.path.getBounds(this.bounds);
+
+        this.tweens.add({
+            targets: this.follower,
+            t: 1,
+            ease: 'Linear',
+            duration: 4000,
+            yoyo: true,
+            repeat: -1
+        });
+    }
+
+
+
+    
+
+    //***********************************WORK IN PROGRESS***********************************//
+    //Patrol Diamond Functions
     createPatrolDiamond() {
         this.patrolDiamond = this.damageGroup.create(1400,550, 'patrolDiamond');
         this.patrolDiamond.setScale(0.65);     
@@ -238,6 +304,7 @@ class PlayScene extends Phaser.Scene {
 
     movePatrolDiamond() {
         this.patrolDiamond.setVelocityX(-300);
+        this.patrolDiamondMoving = true;
     } 
 
     initialPatrolDiamondStop() {
@@ -245,103 +312,12 @@ class PlayScene extends Phaser.Scene {
             this.patrolDiamond.setVelocityX(0);
             this.patrolDiamond.setVelocityY(0);
             this.initialMoveCheckDiamond = true;
+            this.patrolDiamondMoving = false;
         }
     }
+    //***********************************WORK IN PROGRESS END***********************************//
 
-    checkAndStopPatrolDiamond() {
-
-        //****Setting Boundaries****/
-
-        //set top
-        if (this.patrolDiamond.y < 250) {
-            this.patrolDiamond.setVelocityX(0);
-            this.patrolDiamond.setVelocityY(0);
-        }
-
-        //set bottom
-        if (this.patrolDiamond.y > 900) {
-            this.patrolDiamond.setVelocityX(0);
-            this.patrolDiamond.setVelocityY(0);
-        }
-
-        //set right
-        if (this.patrolDiamond.x < 100) {
-            this.patrolDiamond.setVelocityX(0);
-            this.patrolDiamond.setVelocityY(0);
-        }
-
-        //set left
-        if (this.patrolDiamond.x > 300) {
-            this.patrolDiamond.setVelocityX(0);
-            this.patrolDiamond.setVelocityY(0);
-        }
-
-    }
-
-    // checkAndStopPatrolDiamond() {
-        
-    //     let reset = false;
-
-    //     if (reset == true) {
-    //         resetMovement();
-    //     }
-
-
-    //     //stops Diamond
-    //     if (this.patrolDiamond.x < 900) {
-    //         this.patrolDiamond.setVelocityX(0);
-    //     }
-         
-    //     //Diamond moves up this.move1
-    //     if (this.patrolDiamond.x < 900 && this.patrolDiamond.y > 549 && this.move1 == false) {
-    //         console.log("test");
-    //         this.move1 = true;
-    //         this.time.addEvent({
-    //             delay: 2000,
-    //             callback: ()=>{
-    //                 this.patrolDiamond.setVelocityY(-600);
-    //                 this.patrolDiamond.setVelocityX(-400);
-    //             },
-    //             loop: false
-    //         })
-    //     } 
-
-    //     //Diamond moves down this,move2
-    //     if (this.patrolDiamond.y < 240 && this.move2 == false) {
-    //         this.move2 = true;
-    //         console.log(this.patrolDiamond.y);
-    //                 this.patrolDiamond.setVelocityY(0);
-    //                 this.patrolDiamond.setVelocityX(0);
-    //                 this.time.addEvent({
-    //                     delay: 2000,
-    //                     callback: ()=>{
-    //                         this.patrolDiamond.setVelocityY(600);
-                            
-    //                     },
-    //                     loop: false
-    //                 })
-    //     }
-
-        
-    //     if (this.patrolDiamond.y > 550 && this.move2 == true) {
-    //         this.move2 == false;
-    //         console.log('fklasjflkjakdfjsalkfj;');
-    //         console.log(this.patrolDiamond.y);
-    //         this.patrolDiamond.setVelocityY(0);
-    //         this.patrolDiamond.setVelocityX(0);
-    //         this.reset = true;
-    //     }
-
-
-    //     function resetMovement() {
-    //         this.move1 = false;
-    //         this.move2 = false;
-    //         this.move3 = false; 
-
-    //         console.log('reset');
-    //     }
-    // }
-
+    
     //Game Functions for Phaser function "create"
     createPlayer() {
 
@@ -386,7 +362,7 @@ class PlayScene extends Phaser.Scene {
                 frames: this.anims.generateFrameNumbers('newFireBall', {start: 0, end: 16, first: 0}),
                 frameRate: 13,
                 repeat: -1
-        }
+            }
     
             this.anims.create(this.newFireBall);
            
@@ -572,11 +548,27 @@ class PlayScene extends Phaser.Scene {
             this.snakeDistance = 1380;
        // } 
         
+
         //for (let i = 0; i <= 5; i++) {
-            this.snake = this.enemyGroup.create(this.snakeDistance, 300, 'snake');
-            this.snake.body.setSize(150,70);
+            
+            
+            this.snake = {
+                key: 'snakeVersion2',
+                frames: this.anims.generateFrameNumbers('snake', {start: 0, end: 5, first: 0}),
+                frameRate: 3,
+                repeat: -1
+            }
+            
+            this.anims.create(this.snake);
+            
+            this.snake = this.enemyGroup.create(this.snakeDistance, 300, 'snake').play('snakeVersion2');;
+            console.log('end');
+            
+           // this.snake.body.setSize(150,70);
             this.snakeDistance += 100;
             this.snakeTracker += 1;
+            
+            
         //}
         
         this.enemyGroup.setVelocityY(20);
@@ -629,7 +621,7 @@ class PlayScene extends Phaser.Scene {
         console.log('check 2');
         this.anims.create(this.snakeBolt);
         console.log('check 3');
-        this.snakeBoltObject = this.damageGroup.create(this.snake.x, this.snake.y, 'snakeBolt').play('snakeBoltAnimation');
+        this.snakeBoltObject = this.damageGroup.create(this.snake.x - 180, this.snake.y, 'snakeBolt').play('snakeBoltAnimation');
         this.snakeBoltObject.setScale(.5);
         this.snakeBoltObject.setVelocityX(-400);
         
