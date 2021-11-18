@@ -14,11 +14,13 @@ class PlayScene extends Phaser.Scene {
         this.foreground = null;
         this.sun = null;
         this.clouds = null;
+        this.brightness = null;
         this.birdsRight = null;
         this.birdsLeft = null;
         this.music = null;
         this.player = null;
         this.playerVersion2 = null; //check on this to replace with original player
+        this.dunes = null;
 
         //controls
         this.cursors = null;
@@ -78,6 +80,8 @@ class PlayScene extends Phaser.Scene {
         this.movePicker = null;
         this.patrolDiamondMoving = false;
         this.initialMoveCheckDiamond = false;
+
+        //Graphic following line 
         this.line1 = null;
         this.line2 = null;
         this.follower = null;
@@ -109,11 +113,13 @@ class PlayScene extends Phaser.Scene {
         this.load.image('backgroundBuildings', 'assets/backgroundBuildings.png');
         this.load.image('foreground', 'assets/foreground.png');
         this.load.image('clouds', 'assets/clouds.png');
+        this.load.image('dunes', 'assets/dunes.png');
+        this.load.image('brightness', 'assets/brightness.png');
         this.load.image('birdsLeft','assets/birdsLeft.png');
         this.load.image('birdsRight','assets/birdsRight.png');
         this.load.image('sun', 'assets/sun.png');
         this.load.image('player', 'assets/horus.png');
-        this.load.spritesheet('playerVersion2', 'assets/horusSpriteSheet.png', { frameWidth: 370, frameHeight: 500 });
+        this.load.spritesheet('playerVersion2', 'assets/horusSpriteSheet.png', { frameWidth: 222, frameHeight: 300 });
         
 
         this.load.image('fireball', 'assets/fireball.png');
@@ -145,7 +151,7 @@ class PlayScene extends Phaser.Scene {
 
     create() {
         this.music = this.sound.add('theme', {volume: 0.2});
-        //this.music.play();
+        this.music.play();
         this.createBackground();
         this.createPlayer();
         this.createCursorAndKeyUpKeyDown();
@@ -180,10 +186,11 @@ class PlayScene extends Phaser.Scene {
     
 
     update() {
-        this.background.tilePositionX += 0.5;
-        this.foreground.tilePositionX += 8.8;
+        this.background.tilePositionX += .5;
+        this.foreground.tilePositionX += 3.8;
         this.sun.tilePositionX += 0.05;
         this.clouds.tilePositionX += 1;
+        this.dunes.tilePositionX += .7;
        
         this.setControls();
         
@@ -241,20 +248,20 @@ class PlayScene extends Phaser.Scene {
         }
 
 
-        //testing in update pathing
-        this.graphics.clear();
+    //     //testing in update pathing
+    //     this.graphics.clear();
 
-    //  Draw the bounds
-        this.graphics.lineStyle(1, 0x00ff00, 1).strokeRectShape(this.bounds);
+    //     //Draw the bounds
+    //     this.graphics.lineStyle(1, 0x00ff00, 1).strokeRectShape(this.bounds);
 
-        this.graphics.lineStyle(2, 0xffffff, 1);
+    //     this.graphics.lineStyle(2, 0xffffff, 1);
 
-        this.path.draw(this.graphics);
+    //     this.path.draw(this.graphics);
 
-        this.path.getPoint(this.follower.t, this.follower.vec);
+    //     this.path.getPoint(this.follower.t, this.follower.vec);
 
-        this.graphics.fillStyle(0xff0000, 1);
-        this.graphics.fillRect(this.follower.vec.x - 8, this.follower.vec.y - 8, 16, 16);
+    //     this.graphics.fillStyle(0xff0000, 1);
+    //     this.graphics.fillRect(this.follower.vec.x - 8, this.follower.vec.y - 8, 16, 16);
         
     }
 
@@ -263,31 +270,32 @@ class PlayScene extends Phaser.Scene {
     //testing new methods for pathing
 
     createPathing() {
-        this.graphics = this.add.graphics();
+        // this.graphics = this.add.graphics();
 
-        this.bounds = new Phaser.Geom.Rectangle();
+        // this.bounds = new Phaser.Geom.Rectangle();
 
 
-        this.follower = { t: 0, vec: new Phaser.Math.Vector2() };
+        // this.follower = { t: 0, vec: new Phaser.Math.Vector2() };
 
-        this.line1 = new Phaser.Curves.Line([333,1100,500,200]);
-        //this.line2 = new Phaser.Curves.Line([200,300,600,500]);
+        // this.line1 = new Phaser.Curves.Line([333,1100,500,200]);
+        // //this.line2 = new Phaser.Curves.Line([200,300,600,500]);
 
-        this.path = this.add.path();
+        // this.path = this.add.path();
 
-        this.path.add(this.line1);
-        //this.path.add(this.line2);
+        // this.path.add(this.line1);
+        // //this.path.add(this.line2);
 
-        this.path.getBounds(this.bounds);
+        // this.path.getBounds(this.bounds);
 
-        this.tweens.add({
-            targets: this.follower,
-            t: 1,
-            ease: 'Linear',
-            duration: 4000,
-            yoyo: true,
-            repeat: -1
-        });
+        // this.tweens.add({
+        //     targets: this.follower,
+        //     t: 1,
+        //     ease: 'Linear',
+        //     duration: 4000,
+        //     yoyo: true,
+        //     repeat: -1
+        // });
+        console.log('pathing');
     }
 
 
@@ -298,7 +306,7 @@ class PlayScene extends Phaser.Scene {
     //Patrol Diamond Functions
     createPatrolDiamond() {
         this.patrolDiamond = this.damageGroup.create(1400,550, 'patrolDiamond');
-        this.patrolDiamond.setScale(0.65);     
+        this.patrolDiamond.setScale(.7);     
         this.movePatrolDiamond(); 
     }
 
@@ -323,25 +331,34 @@ class PlayScene extends Phaser.Scene {
 
         this.player = this.physics.add.sprite(100, 250, 'playerVersion2');
         this.player.setFrame(1);
-        this.player.setScale(0.4);
+        this.player.setScale(.75);
         this.player.setCollideWorldBounds(true);
-        this.player.body.setSize(255,45);
+        this.player.body.setSize(120,45);
+        this.player.body.x += 20;
 
     }
 
     createBackground() {
-        this.background = this.add.tileSprite(1250, 340, 2540, 720, 'background');
-        this.background.setScale(1);
+        this.background = this.add.tileSprite(1550, 340, 2540, 720, 'background');
+        this.background.setScale(.8);
 
+        
 
         this.sun = this.add.tileSprite(800, 450, 2500, 1000, 'sun');
         this.sun.setScale(.8);
 
-        this.background = this.add.tileSprite(1250, 340, 2540, 720, 'backgroundBuildings');
+        this.background = this.add.tileSprite(1250, 360, 2540, 720, 'backgroundBuildings');
         this.background.setScale(1);
+        this.dunes = this.add.tileSprite(1050, 220, 2540, 720, 'dunes');
+        this.dunes.setScale(1.4);
         
-        this.foreground = this.add.tileSprite(1250, 360, 2540, 720, 'foreground');
+        
 
+        
+        
+        this.brightness = this.add.tileSprite(1250, 360, 2540, 720, 'brightness');
+        this.brightness.setAlpha(0.6);
+        this.foreground = this.add.tileSprite(1250, 360, 2540, 720, 'foreground');
         this.clouds = this.add.tileSprite(1250, 360, 2540, 720, 'clouds');
     }
 
@@ -563,6 +580,8 @@ class PlayScene extends Phaser.Scene {
             
             this.snake = this.enemyGroup.create(this.snakeDistance, 300, 'snake').play('snakeVersion2');;
             console.log('end');
+            this.snake.setScale(.8);
+            this.snake.setSize(280,75);
             
            // this.snake.body.setSize(150,70);
             this.snakeDistance += 100;
@@ -573,8 +592,6 @@ class PlayScene extends Phaser.Scene {
         
         this.enemyGroup.setVelocityY(20);
     }
-
-   
 
     destroySnake(playerDamage, enemy) {
         enemy.disableBody(true, true);
@@ -623,6 +640,7 @@ class PlayScene extends Phaser.Scene {
         console.log('check 3');
         this.snakeBoltObject = this.damageGroup.create(this.snake.x - 180, this.snake.y, 'snakeBolt').play('snakeBoltAnimation');
         this.snakeBoltObject.setScale(.5);
+        this.snakeBoltObject.setSize(140,30);
         this.snakeBoltObject.setVelocityX(-400);
         
     }
