@@ -32,12 +32,21 @@ class PlayScene extends Phaser.Scene {
         this.damageItemHeight = null;
         this.damageItemDistance = null;
 
-        //collect group
+        //collect group Coin
         this.collectGroup = null;
         this.collectItemHeight = null;
         this.collectItemDistance = null;
         this.coins = null;
         this.goldCollectSound = null;
+
+        //collect armor group
+        this.armorGroup = null;
+        this.collectArmorHeight = null;
+        this.collectArmorDistance = null;
+        this.armor = null;
+        this.armorCollectSound = null;
+        this.armorCollected = false;
+
 
         //playerDamage Group
         this.playerDamageGroup = null;
@@ -48,6 +57,8 @@ class PlayScene extends Phaser.Scene {
         this.maxHorethBall = 1;
         this.currentHorethBallNumber = 0;
         this.bluntImpactSound = null;
+
+        
 
         //score
         this.score = null;
@@ -80,6 +91,8 @@ class PlayScene extends Phaser.Scene {
         this.movePicker = null;
         this.patrolDiamondMoving = false;
         this.initialMoveCheckDiamond = false;
+        this.patrolDiamondMoveCheck = 0;
+        this.trueDelay = 400;
 
         //Graphic following line 
         this.line1 = null;
@@ -119,7 +132,8 @@ class PlayScene extends Phaser.Scene {
         this.load.image('birdsRight','assets/birdsRight.png');
         this.load.image('sun', 'assets/sun.png');
         this.load.image('player', 'assets/horus.png');
-        this.load.spritesheet('playerVersion2', 'assets/horusSpriteSheet.png', { frameWidth: 222, frameHeight: 300 });
+        this.load.spritesheet('playerVersion2', 'assets/horusFullSpriteSheet.png', { frameWidth: 370, frameHeight: 300 });
+        this.load.spritesheet('playerArmorOne', 'assets/horethArmorOneSpriteSheet.png', { frameWidth: 222, frameHeight: 300 });
         
 
         this.load.image('fireball', 'assets/fireball.png');
@@ -128,6 +142,9 @@ class PlayScene extends Phaser.Scene {
         this.load.image('coins', 'assets/coin.png');
         this.load.image('horethBall','assets/horethBall.png');
         this.load.audio('bluntImpactSound', 'assets/audio/bluntImpactSound.mp3');
+
+        //armor
+        this.load.image('armor','assets/shield.png');
 
         //this.load.image('snake','assets/snake.png');
     
@@ -141,7 +158,7 @@ class PlayScene extends Phaser.Scene {
 
 
         this.load.audio('orbSound', 'assets/audio/spell.mp3');
-        this.load.audio('goldCollectSound', 'assets/audio/goldCollectSound.mp3')
+        this.load.audio('goldCollectSound', 'assets/audio/coinNew.wav')
 
         
 
@@ -151,7 +168,7 @@ class PlayScene extends Phaser.Scene {
 
     create() {
         this.music = this.sound.add('theme', {volume: 0.2});
-        this.music.play();
+        //this.music.play();
         this.createBackground();
         this.createPlayer();
         this.createCursorAndKeyUpKeyDown();
@@ -161,6 +178,9 @@ class PlayScene extends Phaser.Scene {
         this.createElectricCollider();
         this.createCoins();
         this.createCollectOverlap();
+
+        this.createArmor();
+        this.createCollectArmorOverlap();
 
         this.orbSound = this.sound.add('orbSound', {volume: 0.8});
         this.goldCollectSound = this.sound.add('goldCollectSound');
@@ -179,7 +199,7 @@ class PlayScene extends Phaser.Scene {
 
         // this.createHorethBallCollider();       
         this.createPatrolDiamond();
-        this.createPathing();
+        
         
     }
 
@@ -210,10 +230,12 @@ class PlayScene extends Phaser.Scene {
                 this.initialPatrolDiamondStop();
             }
             
-            // if (this.initialMoveCheckDiamond == true) {
-
+            if (this.initialMoveCheckDiamond == true) {
+                // this.secondDiamondMove();
+                // this.thirdDiamondMove();
+                this.afterPatrolDiamondMove();
            
-            // }
+            }
             
         }
         
@@ -248,20 +270,7 @@ class PlayScene extends Phaser.Scene {
         }
 
 
-    //     //testing in update pathing
-    //     this.graphics.clear();
-
-    //     //Draw the bounds
-    //     this.graphics.lineStyle(1, 0x00ff00, 1).strokeRectShape(this.bounds);
-
-    //     this.graphics.lineStyle(2, 0xffffff, 1);
-
-    //     this.path.draw(this.graphics);
-
-    //     this.path.getPoint(this.follower.t, this.follower.vec);
-
-    //     this.graphics.fillStyle(0xff0000, 1);
-    //     this.graphics.fillRect(this.follower.vec.x - 8, this.follower.vec.y - 8, 16, 16);
+  
         
     }
 
@@ -269,34 +278,7 @@ class PlayScene extends Phaser.Scene {
 
     //testing new methods for pathing
 
-    createPathing() {
-        // this.graphics = this.add.graphics();
-
-        // this.bounds = new Phaser.Geom.Rectangle();
-
-
-        // this.follower = { t: 0, vec: new Phaser.Math.Vector2() };
-
-        // this.line1 = new Phaser.Curves.Line([333,1100,500,200]);
-        // //this.line2 = new Phaser.Curves.Line([200,300,600,500]);
-
-        // this.path = this.add.path();
-
-        // this.path.add(this.line1);
-        // //this.path.add(this.line2);
-
-        // this.path.getBounds(this.bounds);
-
-        // this.tweens.add({
-        //     targets: this.follower,
-        //     t: 1,
-        //     ease: 'Linear',
-        //     duration: 4000,
-        //     yoyo: true,
-        //     repeat: -1
-        // });
-        console.log('pathing');
-    }
+  
 
 
 
@@ -316,13 +298,94 @@ class PlayScene extends Phaser.Scene {
     } 
 
     initialPatrolDiamondStop() {
-        if (this.patrolDiamond.x < 900) {
+        if (this.patrolDiamond.x < 899 & this.move1 == false) {
             this.patrolDiamond.setVelocityX(0);
             this.patrolDiamond.setVelocityY(0);
+            this.move1 = true;
             this.initialMoveCheckDiamond = true;
-            this.patrolDiamondMoving = false;
+            
+            this.time.addEvent({
+                delay: 1800,
+                callback: ()=>{
+                    this.patrolDiamondMoving = false;
+                },
+                loop: false
+            })
         }
     }
+
+    
+
+    afterPatrolDiamondMove() {
+
+        //move diamond up 375 pixels
+        if (this.patrolDiamondMoveCheck < 1) {
+
+            console.log("patrolDiamondMoveCeck");
+            for (let i = 0; i <= 750; i++) {
+                this.time.addEvent({
+                    delay: this.trueDelay += 2, //changes speed of change
+                    callback: ()=>{
+                        this.patrolDiamond.y -= .5; //distance per move
+
+                        if (i == 750) {
+                            this.move1 = true;
+                            this.trueDelay = 500;
+                        }
+                    },
+                    loop: false
+                })
+            }
+
+            this.patrolDiamondMoveCheck += 1;
+        }
+
+        if (this.patrolDiamondMoveCheck == 1 && this.move1 == true && this.patrolDiamond.y == 174.5 && this.move2 == false) {
+            
+
+        
+                this.time.addEvent({
+                    delay: 400, //changes speed of change
+                    callback: ()=>{
+                        this.patrolDiamond.setVelocityX(100); //distance per move
+                        this.move2 = true;
+                    },
+                    loop: false
+                })
+            
+        }
+        
+        
+    }
+
+    // secondDiamondMove() {
+
+    //     if (this.patrolDiamond.y < 200 && this.move2 == false) {
+    //         this.patrolDiamond.y += 0;
+    //         this.patrolDiamondMoving = true;
+    //         this.move2 = true;
+    //         this.time.addEvent({
+    //             delay: 1800,
+    //             callback: ()=>{
+    //                 this.patrolDiamondMoving = false;
+    //             },
+    //             loop: false
+    //         })
+    //     }
+    //     if (this.patrolDiamond.x > 889 && this.patrolDiamondMoving == false) {
+    //         this.patrolDiamond.y -= 5;
+    //         this.patrolDiamond.x += 1.5;
+    //         console.log("secondDiamons");
+    //     }
+    // }
+
+    // thirdDiamondMove() {
+    //     if ( this.patrolDiamond.y < 200 && this.patrolDiamondMoving == false && this.patrolDiamond.x < 1150) {
+    //         //this.patrolDiamond.x += 5;
+    //         console.log('third move');
+    //     }
+
+    // }
     //***********************************WORK IN PROGRESS END***********************************//
 
     
@@ -331,7 +394,7 @@ class PlayScene extends Phaser.Scene {
 
         this.player = this.physics.add.sprite(100, 250, 'playerVersion2');
         this.player.setFrame(1);
-        this.player.setScale(.75);
+        this.player.setScale(.55);
         this.player.setCollideWorldBounds(true);
         this.player.body.setSize(120,45);
         this.player.body.x += 20;
@@ -342,18 +405,14 @@ class PlayScene extends Phaser.Scene {
         this.background = this.add.tileSprite(1550, 340, 2540, 720, 'background');
         this.background.setScale(.8);
 
-        
-
         this.sun = this.add.tileSprite(800, 450, 2500, 1000, 'sun');
         this.sun.setScale(.8);
 
         this.background = this.add.tileSprite(1250, 360, 2540, 720, 'backgroundBuildings');
         this.background.setScale(1);
+        this.background.setAlpha(0.95);
         this.dunes = this.add.tileSprite(1050, 220, 2540, 720, 'dunes');
         this.dunes.setScale(1.4);
-        
-        
-
         
         
         this.brightness = this.add.tileSprite(1250, 360, 2540, 720, 'brightness');
@@ -505,6 +564,40 @@ class PlayScene extends Phaser.Scene {
         }
 
         this.goldCollectSound.play();
+    }
+
+    //-------------------------------Create armor and collect--------------------------------//
+
+    createArmor() {
+        this.collectArmorGroup = this.physics.add.group();
+
+        this.collectArmorDistance = 800;
+
+        for (let i = 0; i < 50; i++) {
+            this.collectArmorHeight = Math.random() * (600 - 50) + 50;
+            this.collectArmorDistance += 800;
+            this.armor = this.collectArmorGroup.create(this.collectArmorDistance, this.collectArmorHeight, 'armor');
+            this.armor.setScale(.5);
+            
+
+            //set collision box
+            this.armor.body.setSize(100,100);
+        }
+
+
+
+        this.collectArmorGroup.setVelocityX(-350);
+    }
+
+    createCollectArmorOverlap() {
+        this.physics.add.overlap(this.player, this.collectArmorGroup, this.collectArmor, null, this);
+    }
+
+    collectArmor(player, collectArmorGroup) {
+        collectArmorGroup.disableBody(true,true);
+        this.armorCollected = true;
+        this.goldCollectSound.play();
+
     }
 
     //Cursors
@@ -694,7 +787,14 @@ class PlayScene extends Phaser.Scene {
         if (left.isDown) {
             this.player.setVelocityX(-295);
             velocityStopper = true;
-            this.player.setFrame(3);
+
+            if (this.armorCollected == false) {
+                this.player.setFrame(3);
+            }
+            if (this.armorCollected == true) {
+                this.player.setFrame(7);
+            }
+            
             
             
             // if (velocityStopper == true) {
@@ -706,11 +806,23 @@ class PlayScene extends Phaser.Scene {
         } 
         else if (this.keyUP.isDown) {
             this.player.setVelocityY(-325);
-            this.player.setFrame(0);
+            if (this.armorCollected == false) {
+                this.player.setFrame(0);
+            }
+            if (this.armorCollected == true) {
+                this.player.setFrame(4);
+            }
+
         }
         else if (this.keyDOWN.isDown) {
             this.player.setVelocityY(325);
-            this.player.setFrame(2);
+            
+            if (this.armorCollected == false) {
+                this.player.setFrame(2);
+            }
+            if (this.armorCollected == true) {
+                this.player.setFrame(6);
+            }
         }
         else {
             this.player.setVelocityY(0);
@@ -719,7 +831,12 @@ class PlayScene extends Phaser.Scene {
                 this.player.setVelocityX(0);
                 velocityStopper == false;
             }
-            this.player.setFrame(1);
+            if (this.armorCollected == false) {
+                this.player.setFrame(1);
+            }
+            if (this.armorCollected == true) {
+                this.player.setFrame(5);
+            }
             
         }
 
