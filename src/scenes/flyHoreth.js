@@ -32,6 +32,14 @@ class PlayScene extends Phaser.Scene {
         this.damageItemHeight = null;
         this.damageItemDistance = null;
 
+        //Damage collider fireball and snakebolt
+        this.deathCollider = null;
+        this.healthCollider = null;
+
+        //Damage collider electricball
+        this.deathCollider2 = null;
+        this.healthCollider2 = null;
+
         //collect group Coin
         this.collectGroup = null;
         this.collectItemHeight = null;
@@ -46,6 +54,8 @@ class PlayScene extends Phaser.Scene {
         this.armor = null;
         this.armorCollectSound = null;
         this.armorCollected = false;
+
+        
 
 
         //playerDamage Group
@@ -199,7 +209,6 @@ class PlayScene extends Phaser.Scene {
 
         // this.createHorethBallCollider();       
         this.createPatrolDiamond();
-        
         
     }
 
@@ -394,7 +403,7 @@ class PlayScene extends Phaser.Scene {
 
         this.player = this.physics.add.sprite(100, 250, 'playerVersion2');
         this.player.setFrame(1);
-        this.player.setScale(.55);
+        this.player.setScale(.45);
         this.player.setCollideWorldBounds(true);
         this.player.body.setSize(120,45);
         this.player.body.x += 20;
@@ -488,7 +497,7 @@ class PlayScene extends Phaser.Scene {
 
     createElectricballMovement() {
 
-       console.log('fsadf');
+       
 
         if (this.electricball.y > 600) {
             this.electricball.setVelocityY(200);
@@ -519,15 +528,50 @@ class PlayScene extends Phaser.Scene {
     }
 
     createDamageCollider() {
-        this.physics.add.collider(this.player, this.damageGroup, function() {
-            this.physics.pause();
+        
+       
+        this.damageCollider = this.physics.add.collider(this.player, this.damageGroup, function() {
+            
+                console.log('add pause');
+                this.physics.pause();
+                    
         });
+        
+        this.healthCollider = this.physics.add.collider(this.player, this.damageGroup, this.changeArmorFalse, null, this);
+
+        this.damageCollider.active = true;
+        this.healthCollider.active = false; 
+    }
+
+    changeArmorFalse() {
+        console.log('take away armor');
+        this.armorCollected = false;
+        console.log(this.armorCollected);
+
+        this.time.addEvent({
+            delay: 500,
+            callback: ()=>{
+                this.damageCollider.active = true;
+                this.healthCollider.active = false;
+                this.damageCollider2.active = true;
+                this.healthCollider2.active = false;
+            },
+            loop: false
+        })
     }
 
     createElectricCollider() {
-        this.physics.add.collider(this.player, this.electricGroup, function() {
+        this.damageCollider2 = this.physics.add.collider(this.player, this.electricGroup, function() {
+            
+            console.log('add pause');
             this.physics.pause();
+                
         });
+    
+    this.healthCollider2 = this.physics.add.collider(this.player, this.electricGroup, this.changeArmorFalse, null, this);
+
+    this.damageCollider2.active = true;
+    this.healthCollider2.active = false; 
     }
 
 
@@ -571,12 +615,12 @@ class PlayScene extends Phaser.Scene {
     createArmor() {
         this.collectArmorGroup = this.physics.add.group();
 
-        this.collectArmorDistance = 800;
+        this.collectArmorDistance = 1500;
 
-        for (let i = 0; i < 50; i++) {
+        for (let i = 0; i < 2; i++) {
             this.collectArmorHeight = Math.random() * (600 - 50) + 50;
-            this.collectArmorDistance += 800;
             this.armor = this.collectArmorGroup.create(this.collectArmorDistance, this.collectArmorHeight, 'armor');
+            this.collectArmorDistance += 15000;
             this.armor.setScale(.5);
             
 
@@ -596,8 +640,14 @@ class PlayScene extends Phaser.Scene {
     collectArmor(player, collectArmorGroup) {
         collectArmorGroup.disableBody(true,true);
         this.armorCollected = true;
+        console.log(this.armorCollected, "- armor collected status");
         this.goldCollectSound.play();
+        this.damageCollider.active = false;
+        this.healthCollider.active = true;
+        this.damageCollider2.active = false;
+        this.healthCollider2.active = true;
 
+        
     }
 
     //Cursors
@@ -788,23 +838,18 @@ class PlayScene extends Phaser.Scene {
             this.player.setVelocityX(-295);
             velocityStopper = true;
 
-            if (this.armorCollected == false) {
-                this.player.setFrame(3);
-            }
-            if (this.armorCollected == true) {
-                this.player.setFrame(7);
-            }
-            
-            
-            
-            // if (velocityStopper == true) {
-            //     this.player.setVelocityX(0);
-            // }
-        } 
+        if (this.armorCollected == false) {
+            this.player.setFrame(3);   
+        }
+
+        if (this.armorCollected == true) {
+            this.player.setFrame(7);      
+        } }
         else if (right.isDown) {
             this.player.setVelocityX(625);            
         } 
         else if (this.keyUP.isDown) {
+            console.log(this.armorCollected);
             this.player.setVelocityY(-325);
             if (this.armorCollected == false) {
                 this.player.setFrame(0);
@@ -816,7 +861,7 @@ class PlayScene extends Phaser.Scene {
         }
         else if (this.keyDOWN.isDown) {
             this.player.setVelocityY(325);
-            
+            console.log(this.armorCollected);
             if (this.armorCollected == false) {
                 this.player.setFrame(2);
             }
