@@ -552,7 +552,7 @@ class PlayScene extends Phaser.Scene {
     }
 
     createElectricCollider() {
-        this.damageCollider2 = this.physics.add.collider(this.player, this.electricGroup, function() {
+        this.damageCollider2 = this.physics.add.collider(this.player, this.electricGroup, () => {
             
             console.log('add pause');
             this.physics.pause();
@@ -888,7 +888,16 @@ class PlayScene extends Phaser.Scene {
         }
     }
 
+    resetVariables() {
+        this.snakeTracker = 0;
+        this.move1 = false;
+        this.move2 = false;
+    }
+
     endScreen() {
+
+        this.resetVariables();
+        
         const { width, height } = this.sys.game.canvas;
 
         this.add.text(width / 2, height / 2 - 150, 'Your Score: ' + this.score, 
