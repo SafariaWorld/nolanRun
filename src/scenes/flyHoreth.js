@@ -1,7 +1,4 @@
 import Phaser from "phaser";
-import WebFontFile from '../WebFontFile';
-
-
 
 class PlayScene extends Phaser.Scene {
 
@@ -91,46 +88,9 @@ class PlayScene extends Phaser.Scene {
 
     //Phaser Functions
     preload() {
-        this.load.audio('theme', 'assets/audio/mainMusic.wav');
-
-        this.load.image('topUI', 'assets/topUI.png');
-        this.load.image('background', 'assets/newBackground.jpg');
-        this.load.image('backgroundBuildings', 'assets/backgroundBuildings.png');
-        this.load.image('foreground', 'assets/foreground.png');
-        this.load.image('clouds', 'assets/clouds.png');
-        this.load.image('birdsLeft','assets/birdsLeft.png');
-        this.load.image('birdsRight','assets/birdsRight.png');
-        this.load.image('sun', 'assets/sun.png');
-        this.load.image('player', 'assets/horus.png');
-        this.load.spritesheet('playerVersion2', 'assets/horusSpriteSheet.png', { frameWidth: 370, frameHeight: 300 });
-
-        this.load.image('fireball', 'assets/fireball.png');
-        this.load.image('electricball', 'assets/electricball.png');
-
-        this.load.image('coins', 'assets/coin.png');
-        this.load.image('horethBall','assets/horethBall.png');
-        this.load.audio('bluntImpactSound', 'assets/audio/bluntImpactSound.mp3');
-
-        this.load.image('snake','assets/snake.png');
-        this.load.image('patrolDiamond', 'assets/patrolDiamond.png');
-
-        this.load.spritesheet("newFireBall", "assets/newFireBall.png", { frameWidth: 300, frameHeight: 300 });
-        this.load.spritesheet("newElectricBall", "assets/newElectricBall.png", { frameWidth: 300, frameHeight: 300 });
-        this.load.spritesheet("snakeBolt","assets/snakeBolt.png", { frameWidth: 200, frameHeight: 60});
-
-
-
-        this.load.audio('orbSound', 'assets/audio/spell.mp3');
-        this.load.audio('goldCollectSound', 'assets/audio/goldCollectSound.mp3')
-
-        
-
-        const fonts = new WebFontFile(this.load, 'Abel')
-		this.load.addFile(fonts);
     }
 
     create() {
-      console.log(this.snake);
         this.music = this.sound.add('theme', {volume: 0.2});
         //this.music.play();
         this.createBackground();
@@ -156,8 +116,6 @@ class PlayScene extends Phaser.Scene {
         
         this.bluntImpactSound = this.sound.add('bluntImpactSound');
         this.input.keyboard.on('keydown-SPACE', this.createHorethBall, this);
-
-        
         
         // this.createHorethBallCollider();       
         this.createPatrolDiamond();
@@ -242,7 +200,6 @@ class PlayScene extends Phaser.Scene {
          
         //Diamond moves up this.move1
         if (this.patrolDiamond.x < 900 && this.patrolDiamond.y > 549 && this.move1 == false) {
-            console.log("test");
             this.move1 = true;
             this.time.addEvent({
                 delay: 1000,
@@ -257,7 +214,6 @@ class PlayScene extends Phaser.Scene {
         //Diamond moves down this,move2
         if (this.patrolDiamond.y < 240 && this.move2 == false) {
             this.move2 = true;
-            console.log(this.patrolDiamond.y);
                     this.patrolDiamond.setVelocityY(0);
                     this.patrolDiamond.setVelocityX(0);
                     this.time.addEvent({
@@ -269,9 +225,6 @@ class PlayScene extends Phaser.Scene {
                         loop: false
                     })
         }
-
-        
-
         
     }
 
@@ -461,7 +414,6 @@ class PlayScene extends Phaser.Scene {
     createHorethBall() {
         this.playerDamageGroup = this.physics.add.group();
 
-        console.log(this.currentHorethBallNumber, this.maxHorethBall);
         if (this.currentHorethBallNumber < this.maxHorethBall) {
             this.horethBall = this.playerDamageGroup.create(this.player.x, this.player.y, 'horethBall');
             this.horethBall.setScale(.3);
@@ -477,7 +429,7 @@ class PlayScene extends Phaser.Scene {
 
         
 
-    //  this.physics.add.collider(this.enemyGroup, this.playerDamageGroup, function() {
+    
     //      console.log(this.playerDamageGroup);
     //      console.log(this.enemyGroup);
     // });
@@ -553,7 +505,6 @@ class PlayScene extends Phaser.Scene {
 
     createSnakeBolt() {
         this.snakeBoltTracker += 1;
-        console.log(this.snakeBoltTracker);
         this.snakeBolt = {
             key: 'snakeBoltAnimation',
             frames: this.anims.generateFrameNumbers('snakeBolt', {start:0, end:2, first:0}),
@@ -574,7 +525,6 @@ class PlayScene extends Phaser.Scene {
     }
 
     bluntImpactTrigger() {
-        console.log('trigger');
         this.bluntImpactSound.play();
     }
 
@@ -584,7 +534,6 @@ class PlayScene extends Phaser.Scene {
     } 
 
     checkAndStopSnake() {
-        //console.log(this.snake.y);
         if (this.snake.x < 1100) {
             this.snake.setVelocityX(0);
         }
@@ -667,10 +616,10 @@ class PlayScene extends Phaser.Scene {
         { fill: '#000000', fontSize: '30px'})
             .setInteractive()
             .setOrigin(.5, 0)
-            .on('pointerdown', this.restart, this)
+            .on('pointerdown', () => this.restart(), this);
     }
 
-    restart() {
+    restart(event) {
         this.score = 0;
         this.snake = null;
         this.snakeBoltTracker = 0;
