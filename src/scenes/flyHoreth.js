@@ -537,7 +537,7 @@ class PlayScene extends Phaser.Scene {
                     
         });
         
-        this.healthCollider = this.physics.add.collider(this.player, this.damageGroup, this.changeArmorFalse, null, this);
+        this.healthCollider = this.physics.add.overlap(this.player, this.damageGroup, this.changeArmorFalse, null, this);
 
         this.damageCollider.active = true;
         this.healthCollider.active = false; 
@@ -547,14 +547,48 @@ class PlayScene extends Phaser.Scene {
         console.log('take away armor');
         this.armorCollected = false;
         console.log(this.armorCollected);
+        this.player.setAlpha(0.5);
 
         this.time.addEvent({
-            delay: 500,
+            delay: 300,
+            callback: ()=>{
+                this.player.setAlpha(1);
+            },
+            loop: false
+        })
+
+        this.time.addEvent({
+            delay: 600,
+            callback: ()=>{
+                this.player.setAlpha(.5);
+            },
+            loop: false
+        })
+
+        this.time.addEvent({
+            delay: 900,
+            callback: ()=>{
+                this.player.setAlpha(1);
+            },
+            loop: false
+        })
+
+        this.time.addEvent({
+            delay: 1200,
+            callback: ()=>{
+                this.player.setAlpha(.5);
+            },
+            loop: false
+        })
+
+        this.time.addEvent({
+            delay: 1500,
             callback: ()=>{
                 this.damageCollider.active = true;
                 this.healthCollider.active = false;
                 this.damageCollider2.active = true;
                 this.healthCollider2.active = false;
+                this.player.setAlpha(1);
             },
             loop: false
         })
@@ -568,7 +602,7 @@ class PlayScene extends Phaser.Scene {
                 
         });
     
-    this.healthCollider2 = this.physics.add.collider(this.player, this.electricGroup, this.changeArmorFalse, null, this);
+    this.healthCollider2 = this.physics.add.overlap(this.player, this.electricGroup, this.changeArmorFalse, null, this);
 
     this.damageCollider2.active = true;
     this.healthCollider2.active = false; 
