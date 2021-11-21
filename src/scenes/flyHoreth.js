@@ -243,11 +243,6 @@ class PlayScene extends Phaser.Scene {
 
     //testing new methods for pathing
 
-  
-
-
-
-    
 
     //***********************************WORK IN PROGRESS***********************************//
     //Patrol Diamond Functions
@@ -921,6 +916,11 @@ class PlayScene extends Phaser.Scene {
         this.move2 = false;
         this.move3 = false;
         this.move4 = false;
+
+        if (this.snakeTracker > 0) {
+            this.snakeTracker = 0;
+        }
+
         this.scene.restart();
 
     }
