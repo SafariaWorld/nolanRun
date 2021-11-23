@@ -134,7 +134,7 @@ class PlayScene extends Phaser.Scene {
 
     create() {
         this.music = this.sound.add('theme', {volume: 0.2});
-        //this.music.play();
+        this.music.play();
         this.createBackground();
         this.createPlayer();
         this.createCursorAndKeyUpKeyDown();
