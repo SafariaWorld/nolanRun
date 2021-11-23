@@ -56,8 +56,8 @@ class PreloadScene extends Phaser.Scene {
         this.load.spritesheet('snake', 'assets/snakeSpriteSheet.png', { frameWidth: 330, frameHeight: 165 });
         this.load.image('patrolDiamond', 'assets/patrolDiamond.png');
 
-        this.load.spritesheet("newFireBall", "assets/newFireBall.png", { frameWidth: 300, frameHeight: 300 });
-        this.load.spritesheet("newElectricBall", "assets/newElectricBall.png", { frameWidth: 300, frameHeight: 300 });
+        this.load.spritesheet("newFireBall", "assets/newFireBall.png", { frameWidth: 150, frameHeight: 150 });
+        this.load.spritesheet("newElectricBall", "assets/newElectricBall.png", { frameWidth: 150, frameHeight: 150 });
         this.load.spritesheet("snakeBolt","assets/snakeBolt.png", { frameWidth: 200, frameHeight: 60});
 
 

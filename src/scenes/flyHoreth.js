@@ -281,7 +281,6 @@ class PlayScene extends Phaser.Scene {
         //move diamond up 375 pixels
         if (this.patrolDiamondMoveCheck < 1) {
 
-            console.log("patrolDiamondMoveCeck");
             for (let i = 0; i <= 750; i++) {
                 this.time.addEvent({
                     delay: this.trueDelay += 2, //changes speed of change
@@ -365,8 +364,8 @@ class PlayScene extends Phaser.Scene {
         this.background = this.add.tileSprite(1550, 340, 2540, 720, 'background');
         this.background.setScale(.8);
 
-        this.sun = this.add.tileSprite(800, 450, 2500, 1000, 'sun');
-        this.sun.setScale(.8);
+        this.sun = this.add.tileSprite(422, 238, 1200, 600, 'sun');
+        this.sun.setScale(3);
 
         this.background = this.add.tileSprite(1250, 360, 2540, 720, 'backgroundBuildings');
         this.background.setScale(1);
@@ -396,7 +395,7 @@ class PlayScene extends Phaser.Scene {
             this.newFireBall = {
                 key: 'fireBallAnimation',
                 frames: this.anims.generateFrameNumbers('newFireBall', {start: 0, end: 16, first: 0}),
-                frameRate: 13,
+                frameRate: 10,
                 repeat: -1
             }
     
@@ -404,7 +403,7 @@ class PlayScene extends Phaser.Scene {
            
 
             this.fireball = this.damageGroup.create(this.damageItemDistance, this.damageItemHeight, 'newFireBall').play('fireBallAnimation');
-            this.fireball.setScale(.8);
+            this.fireball.setScale(1.3);
 
             //set collision box
             this.fireball.body.setSize(80,80);
@@ -415,14 +414,14 @@ class PlayScene extends Phaser.Scene {
             this.newElectricBall = {
                 key: 'electricBallAnimation',
                 frames: this.anims.generateFrameNumbers('newElectricBall', {start:4, end:8, first:4}),
-                frameRate: 10,
+                frameRate: 7,
                 repeat: -1
             }
 
             this.anims.create(this.newElectricBall);
 
             this.electricball = this.electricGroup.create(this.damageItemDistance, this.damageItemHeight, 'newElectricBall').play('electricBallAnimation');
-            this.electricball.setScale(.5);
+            this.electricball.setScale(1);
             this.createElectricballMovement(this.electricball.y);
 
 
@@ -433,7 +432,7 @@ class PlayScene extends Phaser.Scene {
             this.damageItemDistance += 200;
             this.damageItemHeight = Math.random() * (600 - 50) + 50;
             this.electricball = this.electricGroup.create(this.damageItemDistance, this.damageItemHeight, 'newElectricBall').play('electricBallAnimation');
-            this.electricball.setScale(.5);
+            this.electricball.setScale(1);
             this.createElectricballMovement(this.electricball.y);
 
             //set collision box
@@ -459,13 +458,9 @@ class PlayScene extends Phaser.Scene {
     }
 
     checkElectricBallPositionAndMove() {
-        //console.log(this.electricball.y);
-
-        //console.log(this.damageGroup.getChildren().length);
+        
 
         for (let i = 0; i < this.electricGroup.getChildren().length; i++) {
-            //console.log(i)
-            //console.log(this.electricGroup.getChildren()[i].y, "hfas");
            
                 if (this.electricGroup.getChildren()[i].y < 55) {
                     this.electricGroup.getChildren()[i].setVelocityY(200);
@@ -483,7 +478,7 @@ class PlayScene extends Phaser.Scene {
        
         this.damageCollider = this.physics.add.collider(this.player, this.damageGroup, () => {
             
-                console.log('add pause');
+               // console.log('add pause');
                 this.physics.pause();
                 this.endScreen();
                     
@@ -496,9 +491,9 @@ class PlayScene extends Phaser.Scene {
     }
 
     changeArmorFalse() {
-        console.log('take away armor');
+        //console.log('take away armor');
         this.armorCollected = false;
-        console.log(this.armorCollected);
+        //console.log(this.armorCollected);
         this.player.setAlpha(0.5);
 
         this.time.addEvent({
@@ -549,7 +544,7 @@ class PlayScene extends Phaser.Scene {
     createElectricCollider() {
         this.damageCollider2 = this.physics.add.collider(this.player, this.electricGroup, () => {
             
-            console.log('add pause');
+            //console.log('add pause');
             this.physics.pause();
             this.endScreen();
                 
@@ -572,7 +567,7 @@ class PlayScene extends Phaser.Scene {
             this.collectItemHeight = Math.random() * (600 - 50) + 50;
             this.collectItemDistance += 800;
             this.coins = this.collectGroup.create(this.collectItemDistance, this.collectItemHeight, 'coins');
-            this.coins.setScale(.05);
+            this.coins.setScale(.3);
 
             //set collision box
             this.coins.body.setSize(675,675);
@@ -627,7 +622,7 @@ class PlayScene extends Phaser.Scene {
     collectArmor(player, collectArmorGroup) {
         collectArmorGroup.disableBody(true,true);
         this.armorCollected = true;
-        console.log(this.armorCollected, "- armor collected status");
+        //console.log(this.armorCollected, "- armor collected status");
         this.goldCollectSound.play();
         this.damageCollider.active = false;
         this.healthCollider.active = true;
@@ -649,7 +644,7 @@ class PlayScene extends Phaser.Scene {
     createHorethBall() {
         this.playerDamageGroup = this.physics.add.group();
 
-        console.log(this.currentHorethBallNumber, this.maxHorethBall);
+        //console.log(this.currentHorethBallNumber, this.maxHorethBall);
         if (this.currentHorethBallNumber < this.maxHorethBall) {
             this.horethBall = this.playerDamageGroup.create(this.player.x, this.player.y, 'horethBall');
             this.horethBall.setScale(.3);
@@ -709,7 +704,7 @@ class PlayScene extends Phaser.Scene {
             this.anims.create(this.snake);
             
             this.snake = this.enemyGroup.create(this.snakeDistance, 300, 'snake').play('snakeVersion2');;
-            console.log('end');
+            
             this.snake.setScale(.8);
             this.snake.setSize(280,75);
             
@@ -726,7 +721,7 @@ class PlayScene extends Phaser.Scene {
     destroySnake(playerDamage, enemy) {
         enemy.disableBody(true, true);
         playerDamage.disableBody(true, true);
-        console.log('fhsadf');
+        
         this.bluntImpactSound.play();
         //this.goldCollectSound.play();
 
@@ -756,8 +751,7 @@ class PlayScene extends Phaser.Scene {
 
     createSnakeBolt() {
         this.snakeBoltTracker += 1;
-        console.log(this.snakeBoltTracker);
-        console.log('check 1');
+        
         this.snakeBolt = {
             key: 'snakeBoltAnimation',
             frames: this.anims.generateFrameNumbers('snakeBolt', {start:0, end:2, first:0}),
@@ -765,9 +759,9 @@ class PlayScene extends Phaser.Scene {
             repeat: -1
         }
 
-        console.log('check 2');
+       
         this.anims.create(this.snakeBolt);
-        console.log('check 3');
+       
         this.snakeBoltObject = this.damageGroup.create(this.snake.x - 180, this.snake.y, 'snakeBolt').play('snakeBoltAnimation');
         this.snakeBoltObject.setScale(.5);
         this.snakeBoltObject.setSize(140,30);
@@ -781,7 +775,7 @@ class PlayScene extends Phaser.Scene {
     }
 
     bluntImpactTrigger() {
-        console.log('trigger');
+    
         this.bluntImpactSound.play();
     }
 
