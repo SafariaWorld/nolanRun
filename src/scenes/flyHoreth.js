@@ -910,6 +910,8 @@ class PlayScene extends Phaser.Scene {
         this.move2 = false;
         this.move3 = false;
         this.move4 = false;
+        this.music.stop();
+        
 
         if (this.snakeTracker > 0) {
             this.snakeTracker = 0;
