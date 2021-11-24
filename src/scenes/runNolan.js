@@ -159,15 +159,29 @@ class PlayScene extends Phaser.Scene {
             velocityStopper = true;
         }
         else if (right.isDown) {
-            this.player.setVelocityX(225);         
+            this.player.setVelocityX(225);
+            
+            this.player.play('playerStandAnimationKey')
+            if (!this.player.play('playerRunAnimationKey')) {
+                this.player.play('playerRunAnimationKey')
+            }
+    
+
         } 
+        else if (right.isUp) {
+            
+            if (!this.player.play('playerStandAnimationKey')) {
+
+            }
+            this.player.play('playerStandAnimationKey')
+        }
         else if (this.keyUP.isDown) {
             
             this.player.setVelocityY(-325);
         }
         else if (this.keyDOWN.isDown) {
             this.player.setVelocityY(325);
-            this.player.play('playerRunAnimationKey');   
+            this.player.play('playerStandAnimationKey')
         }
         else {
             this.player.setVelocityY(0);
