@@ -33,42 +33,17 @@ class PreloadScene extends Phaser.Scene {
         this.load.image('clouds', 'assets/clouds.png');
         this.load.image('dunes', 'assets/dunes.png');
         this.load.image('brightness', 'assets/brightness.png');
-        this.load.image('birdsLeft','assets/birdsLeft.png');
-        this.load.image('birdsRight','assets/birdsRight.png');
         this.load.image('sun', 'assets/sun.png');
-        this.load.image('player', 'assets/horus.png');
-        this.load.spritesheet('playerVersion2', 'assets/horusFullSpriteSheet.png', { frameWidth: 370, frameHeight: 300 });
-        this.load.spritesheet('playerArmorOne', 'assets/horethArmorOneSpriteSheet.png', { frameWidth: 222, frameHeight: 300 });
-        
-
-        this.load.image('fireball', 'assets/fireball.png');
-        this.load.image('electricball', 'assets/electricball.png');
-
-        this.load.image('coins', 'assets/coin.png');
-        this.load.image('horethBall','assets/horethBall.png');
-        this.load.audio('bluntImpactSound', 'assets/audio/bluntImpactSound.mp3');
-
-        //armor
-        this.load.image('armor','assets/shield.png');
-
-        //this.load.image('snake','assets/snake.png');
-    
-        this.load.spritesheet('snake', 'assets/snakeSpriteSheet.png', { frameWidth: 330, frameHeight: 165 });
-        this.load.image('patrolDiamond', 'assets/patrolDiamond.png');
-
-        this.load.spritesheet("newFireBall", "assets/newFireBall.png", { frameWidth: 150, frameHeight: 150 });
-        this.load.spritesheet("newElectricBall", "assets/newElectricBall.png", { frameWidth: 150, frameHeight: 150 });
-        this.load.spritesheet("snakeBolt","assets/snakeBolt.png", { frameWidth: 200, frameHeight: 60});
-
-
-
+        this.load.image('player', 'assets/nolanStandAnimation.png');
+        this.load.spritesheet('playerVersion2', 'assets/nolanStandAnimation.png', { frameWidth: 160, frameHeight: 160 });
         this.load.audio('orbSound', 'assets/audio/spell.mp3');
         this.load.audio('goldCollectSound', 'assets/audio/coinNew.wav')
+        this.load.image('ground', 'assets/ground.png');
 
         
 
-        const fonts = new WebFontFile(this.load, 'Abel')
-		this.load.addFile(fonts);
+        const fonts = new WebFontFile(this.load, 'Abel');
+		    this.load.addFile(fonts);
     //ALL LOADS BETWEEN COMMENTS
 
 
