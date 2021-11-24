@@ -1,10 +1,10 @@
 import Phaser, { Game } from "phaser";
 import TitleScene from "./scenes/titleScene";
-import flyHoreth from './scenes/flyHoreth';
+import runNolan from './scenes/runNolan';
 import PreloadScene from "./scenes/preloader";
 
 const titleScene = new TitleScene();
-const playScene = new flyHoreth();
+const playScene = new runNolan();
 const preloadScene = new PreloadScene();
 
 const config = {

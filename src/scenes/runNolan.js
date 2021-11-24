@@ -14,12 +14,21 @@ class PlayScene extends Phaser.Scene {
         this.sun = null;
         this.clouds = null;
         this.brightness = null;
-        this.player = null;
         this.ground = null;
 
-        this.playerAnimation = null;
-        this.playerVersion2 = null;
+        //**player**
+        this.player = null;
+
+        this.playerState = 'still';
         
+        //playerStand
+        this.playerStandAnimation = null;
+        this.playerStandSpriteSheet= null;
+
+        //playerRun
+        this.playerRunAnimation = null;
+        this.playerRunSpriteSheet = null;
+
         //controls
         this.cursors = null;
 
@@ -75,23 +84,37 @@ class PlayScene extends Phaser.Scene {
     createPlayer() {
 
         this.playerDamageGroup = this.physics.add.group();
+        this.createPlayerAnimation();
 
-        this.playerAnimation = {
-            key: 'playerStandAnimation',
-            frames: this.anims.generateFrameNumbers('playerVersion2', {start: 0, end: 6, first: 0}),
-            frameRate: 3,
-            repeat: -1
-        }
-
-        this.anims.create(this.playerAnimation);
-
-        this.player = this.playerDamageGroup.create(100, 250, 'playerAnimation').play('playerStandAnimation');
+        this.player = this.playerDamageGroup.create(100, 250, 'playerStandAnimation').play('playerStandAnimationKey');
         this.player.setFrame(1);
         this.player.setScale(1.1);
         this.player.setCollideWorldBounds(true);
         this.player.body.setSize(120,45);
         this.player.body.x += 20;
+    }
 
+    createPlayerAnimation() {
+
+        //stand
+        this.playerStandAnimation = {
+            key: 'playerStandAnimationKey',
+            frames: this.anims.generateFrameNumbers('playerStandSpriteSheet', {start: 0, end: 6, first: 0}),
+            frameRate: 3,
+            repeat: -1
+        }
+
+        this.anims.create(this.playerStandAnimation);
+
+        //run
+        this.playerRunAnimation = {
+            key: 'playerRunAnimationKey',
+            frames: this.anims.generateFrameNumbers('playerRunSpriteSheet', {start: 0, end: 2, first: 0}),
+            frameRate: 8,
+            repeat: -1
+        }
+
+        this.anims.create(this.playerRunAnimation);
     }
 
     createBackground() {
@@ -134,37 +157,17 @@ class PlayScene extends Phaser.Scene {
         if (left.isDown) {
             this.player.setVelocityX(-295);
             velocityStopper = true;
-
-        if (this.armorCollected == false) {
-            this.player.setFrame(3);   
         }
-
-        if (this.armorCollected == true) {
-            this.player.setFrame(7);      
-        } }
         else if (right.isDown) {
-            this.player.setVelocityX(625);            
+            this.player.setVelocityX(225);         
         } 
         else if (this.keyUP.isDown) {
-            console.log(this.armorCollected);
+            
             this.player.setVelocityY(-325);
-            if (this.armorCollected == false) {
-                this.player.setFrame(0);
-            }
-            if (this.armorCollected == true) {
-                this.player.setFrame(4);
-            }
-
         }
         else if (this.keyDOWN.isDown) {
             this.player.setVelocityY(325);
-            console.log(this.armorCollected);
-            if (this.armorCollected == false) {
-                this.player.setFrame(2);
-            }
-            if (this.armorCollected == true) {
-                this.player.setFrame(6);
-            }
+            this.player.play('playerRunAnimationKey');   
         }
         else {
             this.player.setVelocityY(0);
@@ -172,14 +175,7 @@ class PlayScene extends Phaser.Scene {
             if (velocityStopper == true) {
                 this.player.setVelocityX(0);
                 velocityStopper == false;
-            }
-            if (this.armorCollected == false) {
-                this.player.setFrame(1);
-            }
-            if (this.armorCollected == true) {
-                this.player.setFrame(5);
-            }
-            
+            } 
         }
 
         if (this.keyUP.isDown && right.isDown) {
