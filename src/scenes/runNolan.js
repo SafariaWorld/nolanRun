@@ -1,5 +1,7 @@
 import Phaser from "phaser";
 import WebFontFile from '../WebFontFile';
+import structureColliders from "./structureColliders";
+import test1 from "./structureColliders";
 
 
 
@@ -77,6 +79,8 @@ class PlayScene extends Phaser.Scene {
     update() {
     
         this.setControls();
+        structureColliders.test1;
+    
     }
  
 
@@ -88,7 +92,7 @@ class PlayScene extends Phaser.Scene {
 
         this.player = this.playerDamageGroup.create(100, 250, 'playerStandAnimation').play('playerStandAnimationKey');
         this.player.setFrame(1);
-        this.player.setScale(1.1);
+        this.player.setScale(1);
         this.player.setCollideWorldBounds(true);
         this.player.body.setSize(120,45);
         this.player.body.x += 20;
@@ -97,16 +101,18 @@ class PlayScene extends Phaser.Scene {
     createPlayerAnimation() {
 
         //stand
+        console.log('test1');
         this.playerStandAnimation = {
             key: 'playerStandAnimationKey',
-            frames: this.anims.generateFrameNumbers('playerStandSpriteSheet', {start: 0, end: 6, first: 0}),
-            frameRate: 3,
+            frames: this.anims.generateFrameNumbers('playerStandSpriteSheet', {start: 9, end: 13, first: 9}),
+            frameRate: 12,
             repeat: -1
         }
 
         this.anims.create(this.playerStandAnimation);
 
         //run
+        console.log('test2');
         this.playerRunAnimation = {
             key: 'playerRunAnimationKey',
             frames: this.anims.generateFrameNumbers('playerRunSpriteSheet', {start: 0, end: 2, first: 0}),
@@ -144,7 +150,9 @@ class PlayScene extends Phaser.Scene {
     } 
 
 
-    //---------------------------create only 1 horeth ball---------------------------//
+    createPlatformColliders() {
+
+    }
     
     
 
@@ -157,6 +165,7 @@ class PlayScene extends Phaser.Scene {
         if (left.isDown) {
             this.player.setVelocityX(-295);
             velocityStopper = true;
+            
         }
         else if (right.isDown) {
             this.player.setVelocityX(225);
