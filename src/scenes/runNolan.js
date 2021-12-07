@@ -24,11 +24,12 @@ class PlayScene extends Phaser.Scene {
         this.playerState = 'still';
         
         //playerStand
-        this.playerStandAnimation = null;
+        this.playerStandRightAnimation = null;
         this.playerStandSpriteSheet= null;
 
         //playerRun
-        this.playerRunAnimation = null;
+        this.playerRunRightAnimation = null;
+        this.playerRunLeftAnimation = null;
         this.playerRunSpriteSheet = null;
 
         //controls
@@ -36,8 +37,11 @@ class PlayScene extends Phaser.Scene {
 
         //playerDamage Group
         this.playerDamageGroup = null;
-        
 
+        //colliderLevel
+        this.platforms = null;
+        this.platformCollider = null;
+        
         //score
         this.score = null;
         this.scoreText = null;
@@ -65,6 +69,8 @@ class PlayScene extends Phaser.Scene {
         //this.music.play();
         this.createBackground();
         this.createPlayer();
+        this.createPlatforms();
+        this.createPlatformColliders();
         this.createCursorAndKeyUpKeyDown();
 
         //UI
@@ -79,48 +85,75 @@ class PlayScene extends Phaser.Scene {
     update() {
     
         this.setControls();
-        structureColliders.test1;
+        
     
     }
  
 
     //Game Functions for Phaser function "create"
     createPlayer() {
-
         this.playerDamageGroup = this.physics.add.group();
         this.createPlayerAnimation();
 
-        this.player = this.playerDamageGroup.create(100, 250, 'playerStandAnimation').play('playerStandAnimationKey');
+        this.player = this.playerDamageGroup.create(200, 250, 'playerSpriteSheet').play('playerStandRight');
         this.player.setFrame(1);
-        this.player.setScale(1);
+        this.player.setScale(.8);
         this.player.setCollideWorldBounds(true);
-        this.player.body.setSize(120,45);
+        this.player.body.setSize(44,145);
+        this.player.body.setOffset(225, 113);
         this.player.body.x += 20;
     }
 
     createPlayerAnimation() {
 
-        //stand
+        //stand Facing Right
         console.log('test1');
-        this.playerStandAnimation = {
-            key: 'playerStandAnimationKey',
-            frames: this.anims.generateFrameNumbers('playerStandSpriteSheet', {start: 9, end: 13, first: 9}),
+        this.playerStandRightAnimation = {
+            key: 'playerStandRight',
+            frames: this.anims.generateFrameNumbers('playerSpriteSheet', {start: 29, end: 29, first: 29}),
             frameRate: 12,
             repeat: -1
         }
 
-        this.anims.create(this.playerStandAnimation);
+        this.anims.create(this.playerStandRightAnimation);
 
-        //run
+        //run Right
         console.log('test2');
-        this.playerRunAnimation = {
-            key: 'playerRunAnimationKey',
-            frames: this.anims.generateFrameNumbers('playerRunSpriteSheet', {start: 0, end: 2, first: 0}),
+        this.playerRunRightAnimation = {
+            key: 'playerRunRight',
+            frames: this.anims.generateFrameNumbers('playerSpriteSheet', {start: 0, end: 5, first: 0}),
             frameRate: 8,
-            repeat: -1
+            repeat: false
         }
 
-        this.anims.create(this.playerRunAnimation);
+        this.anims.create(this.playerRunRightAnimation);
+        
+        //run Left 
+        console.log('test 3');
+        this.playerRunLeftAnimation = {
+            key: 'playerRunLeft',
+            frames: this.anims.generateFrameNumbers('playerSpriteSheet', {start: 22, end: 27, first: 27}),
+            frameRate: 8,
+            repeat: false
+        }
+
+        this.anims.create(this.playerRunLeftAnimation);
+
+
+        
+    }
+
+    playerRunningRightAnimated() {
+        
+        this.player.anims.play('playerRunRight', true);
+    }
+
+    playerRunningLeftAnimated() {
+        this.player.anims.playReverse('playerRunLeft', true);
+    }
+
+    playerStandingRightAnimated() {
+        this.player.anims.play('playerStandRight', true);
     }
 
     createBackground() {
@@ -138,20 +171,21 @@ class PlayScene extends Phaser.Scene {
         
         this.brightness = this.add.tileSprite(1250, 360, 2540, 720, 'brightness');
         this.brightness.setAlpha(0.6);
-        this.clouds = this.add.tileSprite(1250, 360, 2540, 720, 'clouds');
-        this.ground = this.add.tileSprite(1500, 720, -1780,-500, 'ground').setOrigin(0,0);    
+        this.clouds = this.add.tileSprite(1250, 360, 2540, 720, 'clouds');    
+    }
+
+    createPlatforms() {
+        this.platforms = this.physics.add.staticGroup(); 
+        this.ground = this.platforms.create(730,700, 'ground');
+        //this.ground.setSize(1500, 50)
+        //this.ground.body.setOffset(0, -5)
+        console.log(this.ground.x, '-x  ', this.ground.y, '-y  ');
+        console.log(this.platforms);    
     }
     
-    //Cursors
-    createCursorAndKeyUpKeyDown() {
-        this.cursors = this.input.keyboard.createCursorKeys();
-        this.keyUP = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.UP);
-        this.keyDOWN = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.DOWN);
-    } 
-
 
     createPlatformColliders() {
-
+      this.physics.add.collider(this.player, this.platforms);
     }
     
     
@@ -162,55 +196,35 @@ class PlayScene extends Phaser.Scene {
 
         let velocityStopper = false;
 
-        if (left.isDown) {
-            this.player.setVelocityX(-295);
-            velocityStopper = true;
-            
-        }
-        else if (right.isDown) {
-            this.player.setVelocityX(225);
-            
-            this.player.play('playerStandAnimationKey')
-            if (!this.player.play('playerRunAnimationKey')) {
-                this.player.play('playerRunAnimationKey')
-            }
-    
 
-        } 
-        else if (right.isUp) {
+        if (this.keyUP.isDown) { 
+            this.player.setVelocityY(-615) ;
+            console.log('up press');
+        } else if (this.keyDOWN.isDown) {
+            console.log('press down')
+        } else if (left.isDown) {
+            this.player.setVelocityX(-315) ;
+            console.log('left is down');
+            this.playerRunningLeftAnimated();
+        } else if (right.isDown) {
+            console.log('right is down');
+            this.player.setVelocityX(315) ;
+            this.playerRunningRightAnimated();
             
-            if (!this.player.play('playerStandAnimationKey')) {
-
-            }
-            this.player.play('playerStandAnimationKey')
-        }
-        else if (this.keyUP.isDown) {
-            
-            this.player.setVelocityY(-325);
-        }
-        else if (this.keyDOWN.isDown) {
-            this.player.setVelocityY(325);
-            this.player.play('playerStandAnimationKey')
         }
         else {
-            this.player.setVelocityY(0);
-            this.player.setDrag(1000);
-            if (velocityStopper == true) {
-                this.player.setVelocityX(0);
-                velocityStopper == false;
-            } 
+            this.player.setVelocityX(0)
+            this.player.setVelocityY(0)
+            this.playerStandingRightAnimated();
         }
-
-        if (this.keyUP.isDown && right.isDown) {
-            this.player.setVelocityY(-425);
-            this.player.setVelocityX(425);
-        }
-     
-        if (this.keyDOWN.isDown && right.isDown) {
-            this.player.setVelocityY(425);
-            this.player.setVelocityX(425);
-        }
+ 
     }
+
+    createCursorAndKeyUpKeyDown() {
+        this.cursors = this.input.keyboard.createCursorKeys();
+        this.keyUP = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.UP);
+        this.keyDOWN = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.DOWN);
+    } 
 
     resetVariables() {
       console.log('reset variables');
