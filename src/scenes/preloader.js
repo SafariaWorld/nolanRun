@@ -27,17 +27,18 @@ class PreloadScene extends Phaser.Scene {
     this.load.audio('theme', 'assets/audio/mainMusic.wav');
 
         this.load.image('topUI', 'assets/topUI.png');
-        this.load.image('background', 'assets/newBackground.jpg');
+        this.load.image('background', 'assets/testBackground.png');
         this.load.image('backgroundBuildings', 'assets/backgroundBuildings.png');
         this.load.image('foreground', 'assets/foreground.png');
         this.load.image('clouds', 'assets/clouds.png');
         this.load.image('dunes', 'assets/dunes.png');
         this.load.image('brightness', 'assets/brightness.png');
         this.load.image('sun', 'assets/sun.png');
-        this.load.spritesheet('playerSpriteSheet', 'assets/nolanSpriteFull400Percent.png', { frameWidth: 480, frameHeight: 320 });
+        this.load.spritesheet('playerSpriteSheet', 'assets/nolanSpriteFull400Percentv3.png', { frameWidth: 480, frameHeight: 320 });
+        this.load.spritesheet('nolanRunRightSpriteSheet', 'assets/nolanSpriteFull400Percent.png', { frameWidth: 480, frameHeight: 320});
         this.load.audio('orbSound', 'assets/audio/spell.mp3');
         this.load.audio('goldCollectSound', 'assets/audio/coinNew.wav')
-        this.load.image('ground', 'assets/ground.jpg');
+        this.load.image('ground', 'assets/exampleGround1.png');
 
         
 
@@ -63,6 +64,10 @@ class PreloadScene extends Phaser.Scene {
     //Change to first scene
     this.scene.start("titleScene");
 	}
+
+  printWords() {
+    console.log('printWords');
+  }
 
 }
 

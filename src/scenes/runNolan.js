@@ -1,4 +1,5 @@
 import Phaser from "phaser";
+import PreloadScene from "./preloader";
 import WebFontFile from '../WebFontFile';
 import structureColliders from "./structureColliders";
 import test1 from "./structureColliders";
@@ -68,8 +69,8 @@ class PlayScene extends Phaser.Scene {
         this.music = this.sound.add('theme', {volume: 0.2});
         //this.music.play();
         this.createBackground();
-        this.createPlayer();
         this.createPlatforms();
+        this.createPlayer();
         this.createPlatformColliders();
         this.createCursorAndKeyUpKeyDown();
 
@@ -86,6 +87,7 @@ class PlayScene extends Phaser.Scene {
     
         this.setControls();
         
+       
     
     }
  
@@ -100,7 +102,7 @@ class PlayScene extends Phaser.Scene {
         this.player.setScale(.8);
         this.player.setCollideWorldBounds(true);
         this.player.body.setSize(44,145);
-        this.player.body.setOffset(225, 113);
+        this.player.body.setOffset(225, 110);
         this.player.body.x += 20;
     }
 
@@ -110,7 +112,7 @@ class PlayScene extends Phaser.Scene {
         console.log('test1');
         this.playerStandRightAnimation = {
             key: 'playerStandRight',
-            frames: this.anims.generateFrameNumbers('playerSpriteSheet', {start: 29, end: 29, first: 29}),
+            frames: this.anims.generateFrameNumbers('nolanRunRightSpriteSheet', {start: 29, end: 29, first: 29}),
             frameRate: 12,
             repeat: -1
         }
@@ -121,7 +123,7 @@ class PlayScene extends Phaser.Scene {
         console.log('test2');
         this.playerRunRightAnimation = {
             key: 'playerRunRight',
-            frames: this.anims.generateFrameNumbers('playerSpriteSheet', {start: 0, end: 5, first: 0}),
+            frames: this.anims.generateFrameNumbers('nolanRunRightSpriteSheet', {start: 0, end: 5, first: 0}),
             frameRate: 8,
             repeat: false
         }
@@ -132,7 +134,7 @@ class PlayScene extends Phaser.Scene {
         console.log('test 3');
         this.playerRunLeftAnimation = {
             key: 'playerRunLeft',
-            frames: this.anims.generateFrameNumbers('playerSpriteSheet', {start: 22, end: 27, first: 27}),
+            frames: this.anims.generateFrameNumbers('nolanRunRightSpriteSheet', {start: 23, end: 27, first: 22}),
             frameRate: 8,
             repeat: false
         }
@@ -149,35 +151,36 @@ class PlayScene extends Phaser.Scene {
     }
 
     playerRunningLeftAnimated() {
-        this.player.anims.playReverse('playerRunLeft', true);
+        this.player.anims.play('playerRunLeft', true);
     }
 
     playerStandingRightAnimated() {
         this.player.anims.play('playerStandRight', true);
+
     }
 
     createBackground() {
-        this.background = this.add.tileSprite(1550, 340, 2540, 720, 'background');
-        this.background.setScale(.8);
-
-        this.sun = this.add.tileSprite(422, 238, 1200, 600, 'sun');
-        this.sun.setScale(4);
-
-        this.background = this.add.tileSprite(1250, 360, 2540, 720, 'backgroundBuildings');
-        this.background.setScale(1);
-        this.background.setAlpha(0.95);
-        this.dunes = this.add.tileSprite(1050, 220, 2540, 720, 'dunes');
-        this.dunes.setScale(1.4);
         
-        this.brightness = this.add.tileSprite(1250, 360, 2540, 720, 'brightness');
-        this.brightness.setAlpha(0.6);
-        this.clouds = this.add.tileSprite(1250, 360, 2540, 720, 'clouds');    
+        
+
+         this.sun = this.add.tileSprite(422, 238, 1200, 600, 'sun');
+         this.sun.setScale(4);
+
+        this.background = this.add.tileSprite(640, 360, 1280, 720, 'background');
+        
+         this.dunes = this.add.tileSprite(1050, 220, 2540, 720, 'dunes');
+         this.dunes.setScale(1.4);
+        
+         this.brightness = this.add.tileSprite(1250, 360, 2540, 720, 'brightness');
+         this.brightness.setAlpha(0.6);
+         this.clouds = this.add.tileSprite(1250, 360, 2540, 720, 'clouds');    
     }
 
     createPlatforms() {
         this.platforms = this.physics.add.staticGroup(); 
-        this.ground = this.platforms.create(730,700, 'ground');
-        //this.ground.setSize(1500, 50)
+        this.ground = this.platforms.create(640,665, 'ground');
+       // this.ground.setAlpha(0);
+        this.ground.setSize(1500, 70)
         //this.ground.body.setOffset(0, -5)
         console.log(this.ground.x, '-x  ', this.ground.y, '-y  ');
         console.log(this.platforms);    
@@ -198,7 +201,7 @@ class PlayScene extends Phaser.Scene {
 
 
         if (this.keyUP.isDown) { 
-            this.player.setVelocityY(-615) ;
+            this.player.setVelocityY(-815) ;
             console.log('up press');
         } else if (this.keyDOWN.isDown) {
             console.log('press down')
