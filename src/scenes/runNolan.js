@@ -104,6 +104,8 @@ class PlayScene extends Phaser.Scene {
         this.player.body.setSize(44,145);
         this.player.body.setOffset(225, 110);
         this.player.body.x += 20;
+        console.log('Player log');
+        console.log(this.player);
     }
 
     createPlayerAnimation() {
