@@ -3,7 +3,7 @@ import PreloadScene from "./preloader";
 import WebFontFile from '../WebFontFile';
 import structureColliders from "./structureColliders";
 import test1 from "./structureColliders";
-
+import Player from "./player/player";
 
 
 class PlayScene extends Phaser.Scene {
@@ -21,6 +21,8 @@ class PlayScene extends Phaser.Scene {
 
         //**player**
         this.player = null;
+        this.newPlayer = null;
+        this.playerModel2 = null;
 
         this.playerState = 'still';
         
@@ -56,6 +58,8 @@ class PlayScene extends Phaser.Scene {
         //camera position
         this.screenCenterX = null;
         this.screenCenterY = null;
+        
+        this.testBackground = null;
     }
 
     
@@ -80,7 +84,11 @@ class PlayScene extends Phaser.Scene {
         //create screen positions
         this.screenCenterX = (this.cameras.main.worldView.x + this.cameras.main.width / 2) - 13;
         this.screenCenterY = this.cameras.main.worldView.y + 20;
-        this.scoreText = this.add.text(this.screenCenterX, this.screenCenterY, '0', { fontSize: '40px', fill: 'white' }); 
+        this.scoreText = this.add.text(this.screenCenterX, this.screenCenterY, '0', { fontSize: '40px', fill: 'white' });
+        
+        this.player.tintBottomRight = 0xff0000;
+          
+        //let idea = this.playerStandRightAnimation.getLastFrame;
     }
 
     update() {
@@ -97,7 +105,10 @@ class PlayScene extends Phaser.Scene {
         this.playerDamageGroup = this.physics.add.group();
         this.createPlayerAnimation();
 
+        //this.playerModel2 = new Player({scene:this, x:300, y:300});
+
         this.player = this.playerDamageGroup.create(200, 250, 'playerSpriteSheet').play('playerStandRight');
+        console.log(this.player);
         this.player.setFrame(1);
         this.player.setScale(.8);
         this.player.setCollideWorldBounds(true);
@@ -106,6 +117,13 @@ class PlayScene extends Phaser.Scene {
         this.player.body.x += 20;
         console.log('Player log');
         console.log(this.player);
+
+        this.newPlayer = new Player(this, 300, 300);
+        
+
+
+        console.log(this.newPlayer, '-is newPlayer');
+       
     }
 
     createPlayerAnimation() {
@@ -145,6 +163,8 @@ class PlayScene extends Phaser.Scene {
 
 
         
+
+        
     }
 
     playerRunningRightAnimated() {
@@ -168,21 +188,26 @@ class PlayScene extends Phaser.Scene {
          this.sun = this.add.tileSprite(422, 238, 1200, 600, 'sun');
          this.sun.setScale(4);
 
-        this.background = this.add.tileSprite(640, 360, 1280, 720, 'background');
+        
         
          this.dunes = this.add.tileSprite(1050, 220, 2540, 720, 'dunes');
          this.dunes.setScale(1.4);
         
          this.brightness = this.add.tileSprite(1250, 360, 2540, 720, 'brightness');
          this.brightness.setAlpha(0.6);
-         this.clouds = this.add.tileSprite(1250, 360, 2540, 720, 'clouds');    
+         this.clouds = this.add.tileSprite(1250, 360, 2540, 720, 'clouds'); 
+         
+         //this.testBackground = this.add.tileSprite(300, 300, 1280, 720, 'testBackground'));
+         this.background = this.add.tileSprite(640, 360, 1280, 720, 'newTestBackground');
+        this.background.setScale(1);
     }
 
     createPlatforms() {
         this.platforms = this.physics.add.staticGroup(); 
-        this.ground = this.platforms.create(640,665, 'ground');
+        this.ground = this.platforms.create(640,610, 'ground');
        // this.ground.setAlpha(0);
-        this.ground.setSize(1500, 70)
+        this.ground.setSize(1500, 100)
+        this.ground.setScale(1);
         //this.ground.body.setOffset(0, -5)
         console.log(this.ground.x, '-x  ', this.ground.y, '-y  ');
         console.log(this.platforms);    
@@ -191,6 +216,7 @@ class PlayScene extends Phaser.Scene {
 
     createPlatformColliders() {
       this.physics.add.collider(this.player, this.platforms);
+      this.physics.add.collider(this.newPlayer, this.platforms);
     }
     
     
@@ -204,6 +230,7 @@ class PlayScene extends Phaser.Scene {
 
         if (this.keyUP.isDown) { 
             this.player.setVelocityY(-815) ;
+            this.newPlayer.setVelocityY(-815);
             console.log('up press');
         } else if (this.keyDOWN.isDown) {
             console.log('press down')
@@ -219,7 +246,6 @@ class PlayScene extends Phaser.Scene {
         }
         else {
             this.player.setVelocityX(0)
-            this.player.setVelocityY(0)
             this.playerStandingRightAnimated();
         }
  

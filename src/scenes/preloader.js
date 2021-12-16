@@ -26,6 +26,7 @@ class PreloadScene extends Phaser.Scene {
     //ALL LOADS BETWEEN COMMENTS
     this.load.audio('theme', 'assets/audio/mainMusic.wav');
 
+        this.load.image('newTestBackground', 'assets/testBackgroundv3.png');
         this.load.image('topUI', 'assets/topUI.png');
         this.load.image('background', 'assets/testBackground.png');
         this.load.image('backgroundBuildings', 'assets/backgroundBuildings.png');
