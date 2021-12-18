@@ -1,4 +1,3 @@
-
 // class Player extends Phaser.GameObjects.Sprite {
 
 //     constructor(config) {
@@ -19,10 +18,7 @@
 //         //this.alpha -= .5;
 //         console.log('hello');
 //     }
-
-
 // }
-
 class Player extends Phaser.Physics.Arcade.Sprite {
 
     constructor(scene, x, y) {
@@ -30,12 +26,6 @@ class Player extends Phaser.Physics.Arcade.Sprite {
         scene.physics.add.existing(this);
         scene.add.existing(this);
     }
-
-    create() {
-        this.setBounce(1,1);
-        this.setCollideWorldBounds(true);
-    };
-
 }
 
 export default Player

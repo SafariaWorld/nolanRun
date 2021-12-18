@@ -14,7 +14,7 @@ const config = {
     physics: {
         default: 'arcade',
         arcade: {
-            //debug:true,
+            debug:true,
            gravity: { y: 1800 }
         }
     },
@@ -25,5 +25,4 @@ const game = new Phaser.Game(config);
 game.scene.add('titleScene', titleScene);
 game.scene.add('PlayScene', playScene);
 game.scene.add('PreloadScene', preloadScene);
-
 game.scene.start('preloadScene');

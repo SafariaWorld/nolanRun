@@ -35,10 +35,10 @@ class PreloadScene extends Phaser.Scene {
         this.load.image('dunes', 'assets/dunes.png');
         this.load.image('brightness', 'assets/brightness.png');
         this.load.image('sun', 'assets/sun.png');
-        this.load.spritesheet('playerSpriteSheet', 'assets/nolanSpriteFull400Percentv3.png', { frameWidth: 480, frameHeight: 320 });
+        this.load.spritesheet('playerSpriteSheet', 'assets/nolanSpriteFull400Percent.png', { frameWidth: 480, frameHeight: 320 });
         this.load.spritesheet('nolanRunRightSpriteSheet', 'assets/nolanSpriteFull400Percent.png', { frameWidth: 480, frameHeight: 320});
         this.load.audio('orbSound', 'assets/audio/spell.mp3');
-        this.load.audio('goldCollectSound', 'assets/audio/coinNew.wav')
+        this.load.audio('goldCollectSound', 'assets/audio/coinNew.wav');
         this.load.image('ground', 'assets/exampleGround1.png');
 
         

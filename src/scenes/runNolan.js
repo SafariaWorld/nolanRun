@@ -11,6 +11,8 @@ class PlayScene extends Phaser.Scene {
     constructor() {
         super('PlayScene');
     
+        this.flip = true;
+
         this.background = null;
         this.backgroundBuildings = null;
         this.foreground = null;
@@ -102,12 +104,12 @@ class PlayScene extends Phaser.Scene {
 
     //Game Functions for Phaser function "create"
     createPlayer() {
+       
         this.playerDamageGroup = this.physics.add.group();
         this.createPlayerAnimation();
-
-        //this.playerModel2 = new Player({scene:this, x:300, y:300});
-
-        this.player = this.playerDamageGroup.create(200, 250, 'playerSpriteSheet').play('playerStandRight');
+        this.player = this.playerDamageGroup.create(200, 250, 'playerSpriteSheet')
+            .play('playerStandRight');
+        
         console.log(this.player);
         this.player.setFrame(1);
         this.player.setScale(.8);
@@ -115,10 +117,14 @@ class PlayScene extends Phaser.Scene {
         this.player.body.setSize(44,145);
         this.player.body.setOffset(225, 110);
         this.player.body.x += 20;
+        this.player.setBounce(.2);
         console.log('Player log');
         console.log(this.player);
 
-        this.newPlayer = new Player(this, 300, 300);
+        this.newPlayer = new Player(this, 300, 300)
+            .play('playerStandRight');
+        this.newPlayer.body.setSize(44,145);
+        this.newPlayer.body.setOffset(225, 110);
         
 
 
@@ -219,7 +225,17 @@ class PlayScene extends Phaser.Scene {
       this.physics.add.collider(this.newPlayer, this.platforms);
     }
     
-    
+    flipHim() {
+
+        if (this.flip == true) {
+            this.flip = false;
+        } else {
+            this.flip = true;
+        }
+
+
+        return this.flip;
+    }
 
     //Game Function for Phaser function "update"
     setControls() {
@@ -231,6 +247,7 @@ class PlayScene extends Phaser.Scene {
         if (this.keyUP.isDown) { 
             this.player.setVelocityY(-815) ;
             this.newPlayer.setVelocityY(-815);
+            this.player.flipY =  this.flipHim();
             console.log('up press');
         } else if (this.keyDOWN.isDown) {
             console.log('press down')
