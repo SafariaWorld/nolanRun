@@ -166,15 +166,21 @@ class PlayScene extends Phaser.Scene {
         this.slimeGroup = this.physics.add.group();
         console.log('slime group created!');
         this.slime = this.slimeGroup.create(1100,100, 'slime').play('slimeIdle');
+        this.slime.setSize(90, 45);
         console.log('slime created!');
 
-        this.physics.add.collider(this.slimeGroup, this.platforms);
+        this.physics.add.collider(this.slimeGroup, this.platforms, this.slowSlime, null, this);
         this.physics.add.collider(this.slimeGroup, this.newPlayer);
+        //this.physics.add.overlap(this.slimeGroup, this.platforms, );
         this.time.addEvent({delay: 1500, callback: this.moveSlime, callbackScope: this});
+        this.slime.setBounce(0, 0.3);
+        this.slime.setOffset(0, 50);
     }
 
     moveSlime() {
-        this.slime.setVelocityX(-40)
+        this.slime.setVelocityX(-350)
+        this.slime.setVelocityY(-1070);
+        console.log(this.slime);
     }
 
     createSlimeAnimation() {
@@ -188,6 +194,22 @@ class PlayScene extends Phaser.Scene {
 
         console.log('slime create animation!');
         this.anims.create(this.slimeIdleAnimation);
+    }
+
+    slowSlime() {
+
+        
+        console.log(this.slime.x);
+        console.log(this.newPlayer.x);
+
+        if (this.slime.x > this.newPlayer.x) {
+            this.slime.setVelocityX(-40);
+            this.slime.flipX = false;
+        } else {
+            this.slime.setVelocityX(40);
+            this.slime.flipX = true;
+        }
+        
     }
 
     playerRunningRightAnimated() {
@@ -224,7 +246,7 @@ class PlayScene extends Phaser.Scene {
 
     createPlatforms() {
         this.platforms = this.physics.add.staticGroup(); 
-        this.ground = this.platforms.create(640,610, 'ground');
+        this.ground = this.platforms.create(640,620, 'ground');
        // this.ground.setAlpha(0);
         this.ground.setSize(1500, 100)
         this.ground.setScale(1);
@@ -265,11 +287,14 @@ class PlayScene extends Phaser.Scene {
         } else if (left.isDown) {
             this.newPlayer.setVelocityX(-315);
             console.log('left is down');
-            this.playerRunningLeftAnimated();
+            this.playerRunningRightAnimated();
+            this.newPlayer.flipX = true;
         } else if (right.isDown) {
             console.log('right is down');
             this.newPlayer.setVelocityX(315)
             this.playerRunningRightAnimated();
+            this.newPlayer.flipX = false;
+            
             
         }
         else {

@@ -22,7 +22,7 @@
 class Player extends Phaser.Physics.Arcade.Sprite {
 
     constructor(scene, x, y) {
-        super(scene, x, y, 'playerSpriteSheet');
+        super(scene, x, y, 'nolanSpriteFull300Percent.png');
         scene.physics.add.existing(this);
         scene.add.existing(this);
     }
