@@ -41,6 +41,9 @@ class PreloadScene extends Phaser.Scene {
         this.load.audio('goldCollectSound', 'assets/audio/coinNew.wav');
         this.load.image('ground', 'assets/exampleGround1.png');
 
+        //slime
+        this.load.spritesheet('slime', 'assets/slimev1-300.png', { frameWidth: 96, frameHeight: 96 });
+
         
 
         const fonts = new WebFontFile(this.load, 'Abel');

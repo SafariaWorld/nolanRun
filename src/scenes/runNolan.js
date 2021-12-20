@@ -37,6 +37,12 @@ class PlayScene extends Phaser.Scene {
         this.playerRunLeftAnimation = null;
         this.playerRunSpriteSheet = null;
 
+        //slime
+        this.slime = null;
+        this.slimeIdleAnimation = null;
+        this.slimeSpriteSheet = null;
+        this.slimeGroup = null;
+
         //controls
         this.cursors = null;
 
@@ -60,7 +66,6 @@ class PlayScene extends Phaser.Scene {
         //camera position
         this.screenCenterX = null;
         this.screenCenterY = null;
-        
         this.testBackground = null;
     }
 
@@ -79,6 +84,9 @@ class PlayScene extends Phaser.Scene {
         this.createPlayer();
         this.createPlatformColliders();
         this.createCursorAndKeyUpKeyDown();
+        
+        //slime
+        this.createSlime();
 
         //UI
         //this.topUI = this.add.image(0, 360, 'topUI').setOrigin(0, 0.5);
@@ -88,7 +96,7 @@ class PlayScene extends Phaser.Scene {
         this.screenCenterY = this.cameras.main.worldView.y + 20;
         this.scoreText = this.add.text(this.screenCenterX, this.screenCenterY, '0', { fontSize: '40px', fill: 'white' });
         
-        this.player.tintBottomRight = 0xff0000;
+
           
         //let idea = this.playerStandRightAnimation.getLastFrame;
     }
@@ -97,29 +105,13 @@ class PlayScene extends Phaser.Scene {
     
         this.setControls();
         
-       
-    
     }
  
-
     //Game Functions for Phaser function "create"
     createPlayer() {
        
         this.playerDamageGroup = this.physics.add.group();
         this.createPlayerAnimation();
-        this.player = this.playerDamageGroup.create(200, 250, 'playerSpriteSheet')
-            .play('playerStandRight');
-        
-        console.log(this.player);
-        this.player.setFrame(1);
-        this.player.setScale(.8);
-        this.player.setCollideWorldBounds(true);
-        this.player.body.setSize(44,145);
-        this.player.body.setOffset(225, 110);
-        this.player.body.x += 20;
-        this.player.setBounce(.2);
-        console.log('Player log');
-        console.log(this.player);
 
         this.newPlayer = new Player(this, 300, 300)
             .play('playerStandRight');
@@ -166,36 +158,58 @@ class PlayScene extends Phaser.Scene {
         }
 
         this.anims.create(this.playerRunLeftAnimation);
+    }
 
-
+    createSlime() {
+        this.createSlimeAnimation();
         
+        this.slimeGroup = this.physics.add.group();
+        console.log('slime group created!');
+        this.slime = this.slimeGroup.create(1100,100, 'slime').play('slimeIdle');
+        console.log('slime created!');
 
-        
+        this.physics.add.collider(this.slimeGroup, this.platforms);
+        this.physics.add.collider(this.slimeGroup, this.newPlayer);
+        this.time.addEvent({delay: 1500, callback: this.moveSlime, callbackScope: this});
+    }
+
+    moveSlime() {
+        this.slime.setVelocityX(-40)
+    }
+
+    createSlimeAnimation() {
+        console.log('slime animation function!');
+        this.slimeIdleAnimation = {
+            key: 'slimeIdle',
+            frames: this.anims.generateFrameNumbers('slime', {start: 0, end: 4, first: 1}),
+            frameRate: 5,
+            repeat: -1
+        }
+
+        console.log('slime create animation!');
+        this.anims.create(this.slimeIdleAnimation);
     }
 
     playerRunningRightAnimated() {
         
-        this.player.anims.play('playerRunRight', true);
+        this.newPlayer.anims.play('playerRunRight', true);
+        
     }
 
     playerRunningLeftAnimated() {
-        this.player.anims.play('playerRunLeft', true);
+        this.newPlayer.anims.play('playerRunLeft', true);
     }
 
     playerStandingRightAnimated() {
-        this.player.anims.play('playerStandRight', true);
+        this.newPlayer.anims.play('playerStandRight', true);
 
     }
 
     createBackground() {
         
-        
-
          this.sun = this.add.tileSprite(422, 238, 1200, 600, 'sun');
          this.sun.setScale(4);
 
-        
-        
          this.dunes = this.add.tileSprite(1050, 220, 2540, 720, 'dunes');
          this.dunes.setScale(1.4);
         
@@ -221,7 +235,6 @@ class PlayScene extends Phaser.Scene {
     
 
     createPlatformColliders() {
-      this.physics.add.collider(this.player, this.platforms);
       this.physics.add.collider(this.newPlayer, this.platforms);
     }
     
@@ -232,7 +245,6 @@ class PlayScene extends Phaser.Scene {
         } else {
             this.flip = true;
         }
-
 
         return this.flip;
     }
@@ -245,24 +257,23 @@ class PlayScene extends Phaser.Scene {
 
 
         if (this.keyUP.isDown) { 
-            this.player.setVelocityY(-815) ;
             this.newPlayer.setVelocityY(-815);
-            this.player.flipY =  this.flipHim();
+            
             console.log('up press');
         } else if (this.keyDOWN.isDown) {
             console.log('press down')
         } else if (left.isDown) {
-            this.player.setVelocityX(-315) ;
+            this.newPlayer.setVelocityX(-315);
             console.log('left is down');
             this.playerRunningLeftAnimated();
         } else if (right.isDown) {
             console.log('right is down');
-            this.player.setVelocityX(315) ;
+            this.newPlayer.setVelocityX(315)
             this.playerRunningRightAnimated();
             
         }
         else {
-            this.player.setVelocityX(0)
+            this.newPlayer.setVelocityX(0);
             this.playerStandingRightAnimated();
         }
  
