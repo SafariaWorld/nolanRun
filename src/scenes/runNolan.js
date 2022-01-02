@@ -4,6 +4,7 @@ import WebFontFile from '../WebFontFile';
 import structureColliders from "./structureColliders";
 import test1 from "./structureColliders";
 import Player from "./player/player";
+import HealthBar from "./player/healthBar";
 
 
 class PlayScene extends Phaser.Scene {
@@ -25,8 +26,11 @@ class PlayScene extends Phaser.Scene {
         this.player = null;
         this.newPlayer = null;
         this.playerModel2 = null;
-
         this.playerState = 'still';
+
+        //healthbar
+        this.healthBar = null;
+        this.currentHealth = 0;
         
         //playerStand
         this.playerStandRightAnimation = null;
@@ -37,11 +41,15 @@ class PlayScene extends Phaser.Scene {
         this.playerRunLeftAnimation = null;
         this.playerRunSpriteSheet = null;
 
+        //playerAttack
+        this.playerWhipAnimation = null;
+
         //slime
         this.slime = null;
         this.slimeIdleAnimation = null;
         this.slimeSpriteSheet = null;
         this.slimeGroup = null;
+        this.slimeCollider = null;
 
         //controls
         this.cursors = null;
@@ -84,9 +92,13 @@ class PlayScene extends Phaser.Scene {
         this.createPlayer();
         this.createPlatformColliders();
         this.createCursorAndKeyUpKeyDown();
+        this.initiateWhipSwing();
         
         //slime
         this.createSlime();
+
+        //healthbar
+        this.createHealthBar();
 
         //UI
         //this.topUI = this.add.image(0, 360, 'topUI').setOrigin(0, 0.5);
@@ -106,6 +118,17 @@ class PlayScene extends Phaser.Scene {
         this.setControls();
         
     }
+
+    //Nolan Attacks
+    initiateWhipSwing() {
+        console.log('test');
+        this.input.keyboard.on('keydown-SPACE', this.swingWhip, this);
+    }
+
+    swingWhip() {
+        console.log('whip swing');
+        this.newPlayer.anims.play('playerWhip');  
+    }  
  
     //Game Functions for Phaser function "create"
     createPlayer() {
@@ -124,13 +147,15 @@ class PlayScene extends Phaser.Scene {
        
     }
 
+
+
     createPlayerAnimation() {
 
         //stand Facing Right
         console.log('test1');
         this.playerStandRightAnimation = {
             key: 'playerStandRight',
-            frames: this.anims.generateFrameNumbers('nolanRunRightSpriteSheet', {start: 29, end: 29, first: 29}),
+            frames: this.anims.generateFrameNumbers('nolanRunRightSpriteSheet', {start: 9, end: 9, first: 9}),
             frameRate: 12,
             repeat: -1
         }
@@ -158,6 +183,15 @@ class PlayScene extends Phaser.Scene {
         }
 
         this.anims.create(this.playerRunLeftAnimation);
+
+        this.playerWhipAnimation = {
+            key: 'playerWhip',
+            frames: this.anims.generateFrameNumbers('nolanRunRightSpriteSheet', {start: 9, end: 12, first: 9}),
+            frameRate: 18,
+            repeat: false
+        }
+
+        this.anims.create(this.playerWhipAnimation);
     }
 
     createSlime() {
@@ -170,17 +204,87 @@ class PlayScene extends Phaser.Scene {
         console.log('slime created!');
 
         this.physics.add.collider(this.slimeGroup, this.platforms, this.slowSlime, null, this);
-        this.physics.add.collider(this.slimeGroup, this.newPlayer);
+        this.slimeCollider = this.physics.add.overlap(this.slimeGroup, this.newPlayer, this.loseHealth, null, this);
+
+
+
         //this.physics.add.overlap(this.slimeGroup, this.platforms, );
         this.time.addEvent({delay: 1500, callback: this.moveSlime, callbackScope: this});
         this.slime.setBounce(0, 0.3);
         this.slime.setOffset(0, 50);
+
+        //add physics via extended sprite
     }
+
+    createHealthBar() {
+
+        this.healthBar = new HealthBar(this, 255, 85);
+        this.healthBar.setFrame(this.currentHealth);
+
+    }
+
+    loseHealth() {
+
+        this.currentHealth = this.currentHealth + 1;
+        this.healthBar.setFrame(this.currentHealth);
+        this.slimeCollider.active = false;
+
+        this.newPlayer.setAlpha(0.5);
+
+        this.time.addEvent({
+            delay: 300,
+            callback: ()=>{
+                this.newPlayer.setAlpha(1);
+            },
+            loop: false
+        })
+
+        this.time.addEvent({
+            delay: 600,
+            callback: ()=>{
+                this.newPlayer.setAlpha(.5);
+            },
+            loop: false
+        })
+
+        this.time.addEvent({
+            delay: 900,
+            callback: ()=>{
+                this.newPlayer.setAlpha(1);
+            },
+            loop: false
+        })
+
+        this.time.addEvent({
+            delay: 1200,
+            callback: ()=>{
+                this.newPlayer.setAlpha(.5);
+            },
+            loop: false
+        })
+
+        this.time.addEvent({
+            delay: 1500,
+            callback: ()=>{
+                this.slimeCollider.active = true;
+                this.newPlayer.setAlpha(1);
+            },
+            loop: false
+        })
+
+
+        if (this.currentHealth === 3) {
+            this.newPlayer.killPlayer();
+        }
+    }
+
+
+    
 
     moveSlime() {
         this.slime.setVelocityX(-350)
         this.slime.setVelocityY(-1070);
-        console.log(this.slime);
+        console.log(this.slime); 
     }
 
     createSlimeAnimation() {
@@ -197,10 +301,6 @@ class PlayScene extends Phaser.Scene {
     }
 
     slowSlime() {
-
-        
-        console.log(this.slime.x);
-        console.log(this.newPlayer.x);
 
         if (this.slime.x > this.newPlayer.x) {
             this.slime.setVelocityX(-40);
@@ -284,6 +384,7 @@ class PlayScene extends Phaser.Scene {
             console.log('up press');
         } else if (this.keyDOWN.isDown) {
             console.log('press down')
+            this.newPlayer.anims.play('playerWhip', true);
         } else if (left.isDown) {
             this.newPlayer.setVelocityX(-315);
             console.log('left is down');
@@ -308,6 +409,7 @@ class PlayScene extends Phaser.Scene {
         this.cursors = this.input.keyboard.createCursorKeys();
         this.keyUP = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.UP);
         this.keyDOWN = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.DOWN);
+        this.keySPACE = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
     } 
 
     resetVariables() {

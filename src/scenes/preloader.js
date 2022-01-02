@@ -1,5 +1,6 @@
 import WebFontFile from '../WebFontFile';
 import Phaser from "phaser";
+import TitleScene from './titleScene';
 
 class PreloadScene extends Phaser.Scene {
 
@@ -40,6 +41,10 @@ class PreloadScene extends Phaser.Scene {
         this.load.audio('orbSound', 'assets/audio/spell.mp3');
         this.load.audio('goldCollectSound', 'assets/audio/coinNew.wav');
         this.load.image('ground', 'assets/exampleGround1.png');
+
+        //healthbar 
+
+        this.load.spritesheet('healthBar', 'assets/healthBarSpriteSheet.png', {frameWidth: 298, frameHeight: 58});
 
         //slime
         this.load.spritesheet('slime', 'assets/slimev1-300.png', { frameWidth: 96, frameHeight: 96 });

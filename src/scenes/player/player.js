@@ -1,31 +1,32 @@
-// class Player extends Phaser.GameObjects.Sprite {
-
-//     constructor(config) {
-//         super(config.scene, config.x, config.y, "playerSpriteSheet");
-//         //this.setScale(4);
-//         //this.setAlpha(0.6);
-//         this.setInteractive();
-//         this.on('pointerdown', this.sunClick, this);
-//         config.scene.add.existing(this);
-//     }
-
-
-//     preload() {
-
-//     }
-
-//     sunClick() {
-//         //this.alpha -= .5;
-//         console.log('hello');
-//     }
-// }
+import HealthBar from "./healthBar";
 class Player extends Phaser.Physics.Arcade.Sprite {
 
     constructor(scene, x, y) {
         super(scene, x, y, 'nolanSpriteFull300Percent.png');
         scene.physics.add.existing(this);
         scene.add.existing(this);
+
+
+        this.healthBar = null;
+        // let killPlayer = function killPlayer() {
+        //     console.log('killPlayer Played');
+        //     this.scene.pause();
+        // }
     }
+
+    killPlayer() {
+        console.log('killPlayer Played');
+        this.scene.scene.pause();
+    }
+
+    // addCollider(enemyGroup, player) {
+    //     console.log('collider funct');
+    //     scene.physics.add.collider(enemyGroup, player, this.killPlayer, null, this)
+    // }
+
+    
 }
+
+
 
 export default Player
